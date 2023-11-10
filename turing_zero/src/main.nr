@@ -2,7 +2,7 @@
 
 use dep::std;
 
-fn main(tape_init: [bool; 10], tape_out: [bool; 10], write: [bool; 10], move: [bool; 10], state_transition: [u8; 10]) {
+fn main(tape_init: pub [bool; 10], tape_out: pub [bool; 10], write: pub [bool; 10], move: pub[bool; 10], state_transition: pub [u8; 10]) {
     let mut state: u8= 0;
     let mut head: u8 = 0;
     let mut tape: [bool; 10] = tape_init;
