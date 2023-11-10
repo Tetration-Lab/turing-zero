@@ -6,12 +6,13 @@ fn main(tape_init: pub [bool; 10], tape_out: pub [bool; 10], write: pub [bool; 1
     let mut state: u8= 0;
     let mut head: u8 = 0;
     let mut tape: [bool; 10] = tape_init;
+    let tape_len = tape.len() as u8;
     for _ in 0..69{
         let read = tape[head];
         let transition_index = (state * 2 + read as u8);
         tape[head] = write[transition_index];
         if (move[transition_index]) {
-            head += 1;
+            head += 1 * (head < tape_len) as u8;
         } else {
             head -= 1 * (head > 0) as u8;
         } 
