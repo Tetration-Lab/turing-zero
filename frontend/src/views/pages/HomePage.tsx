@@ -8,6 +8,7 @@ import {
   useToast,
   Box,
   SimpleGrid,
+  HStack,
 } from "@chakra-ui/react";
 import { Section, Navbar, Footer, AppHeader } from "@/components/common";
 import { useAccount, useChainId, useSwitchNetwork } from "wagmi";
@@ -30,7 +31,6 @@ export const HomePage = () => {
   } = useSwitchNetwork();
   const { isConnected } = useAccount();
   const chainId = useChainId();
-  const toast = useToast();
 
   const [code, setCode] = useState(initConfigString);
   const setCodeDebounced = useMemo(
@@ -55,24 +55,21 @@ export const HomePage = () => {
 
   const convertNode = useMemo((): d3Node[] => {
     if (config) {
-      const nodes = Object.keys(config.states).map((s) => {
+      const nodes = ["halt", ...Object.keys(config.states)].map((s) => {
         const labelType: labelType = "string";
         return {
           id: s,
           label: s,
           labelType,
-          class: styles.turingNode,
+          class:
+            turing.currentProgram === s
+              ? styles.turingNodeSelected
+              : styles.turingNode,
         };
-      });
-      nodes.push({
-        id: "halt",
-        label: "halt",
-        labelType: "string",
-        class: styles.turingNode,
       });
       return nodes;
     } else return [];
-  }, [config]);
+  }, [config, turing.currentProgram]);
 
   const convertLink = useMemo((): d3Link[] => {
     const links: d3Link[] = [];
@@ -101,6 +98,8 @@ export const HomePage = () => {
     }
     return links;
   }, [config]);
+
+  const [resetPosition, setResetPosition] = useState(false);
 
   return (
     <>
@@ -140,8 +139,9 @@ export const HomePage = () => {
               ))}
             </Wrap>
             <DagreGraph
-              nodes={convertNode ?? []}
-              links={convertLink ?? []}
+              key={`${resetPosition}`}
+              nodes={convertNode}
+              links={convertLink}
               config={{
                 rankdir: "LR",
                 align: "DL",
@@ -154,20 +154,17 @@ export const HomePage = () => {
               zoomable
             />
             <SimpleGrid
-              columns={turing.input.length + 3}
+              columns={turing.input.length}
               width="fit-content"
               alignSelf="center"
             >
-              {[
-                config?.empty,
-                config?.empty,
-                ...turing.input.split(""),
-                config?.empty,
-              ].map((c) => (
+              {turing.input.split("").map((c, i) => (
                 <Text
+                  key={i}
                   w="30px"
                   fontSize="xl"
-                  border="1px solid gray"
+                  borderWidth="1px"
+                  borderColor={turing.currentInput === i ? "red" : "gray"}
                   px={2}
                   h="full"
                 >
@@ -175,6 +172,23 @@ export const HomePage = () => {
                 </Text>
               ))}
             </SimpleGrid>
+            <HStack justify="center">
+              <Button
+                onClick={() => turing.setSimulating(true)}
+                colorScheme="green"
+              >
+                Simulate
+              </Button>
+              <Button onClick={turing.next} colorScheme="orange">
+                Next
+              </Button>
+              <Button onClick={turing.reset} colorScheme="red">
+                Reset
+              </Button>
+              <Button onClick={() => setResetPosition((e) => !e)}>
+                Reset Position
+              </Button>
+            </HStack>
 
             <Box
               sx={{

@@ -1,7 +1,13 @@
 .turingNode {
   fill: white;
   stroke: black;
-  stroke-width: 1.5px;
+  stroke-width: 1px;
+}
+
+.turingNodeSelected {
+  fill: white;
+  stroke: red;
+  stroke-width: 1px;
 }
 
 .turingNode text {
@@ -10,5 +16,5 @@
 
 .turingPath {
   stroke: black;
-  stroke-width: 1.5px;
+  stroke-width: 1px;
 }
