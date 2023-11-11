@@ -10,19 +10,26 @@ export const useTuring = (initialConfig: Config | null) => {
   const [currentProgram, setCurrentProgram] = useState<string | "halt" | null>(
     null
   );
+  const [endInput, setEndInput] = useState<("0" | "1" | " ")[] | null>(null);
+  const [initialInput, setInitialInput] = useState<("0" | "1" | " ")[] | null>(
+    null
+  );
 
   const reset = useCallback(() => {
     setStep(0);
+    setEndInput(null);
+    setInitialInput(null);
     const inp = _.range(TAPE_SIZE).map(() => " ");
     if (initialConfig) {
       inp.splice(
-        TAPE_SIZE / 2 - initialConfig.input.length / 2,
+        TAPE_SIZE / 2,
         initialConfig.input.length,
         ...initialConfig.input.split("")
       );
       setInput(inp as ("0" | "1" | " ")[]);
+      setInitialInput(inp as ("0" | "1" | " ")[]);
       setCurrentProgram(Object.keys(initialConfig.states)?.[0] ?? null);
-      setCurrentInput(TAPE_SIZE / 2 - initialConfig.input.length / 2);
+      setCurrentInput(TAPE_SIZE / 2);
     }
   }, [initialConfig]);
 
@@ -31,7 +38,11 @@ export const useTuring = (initialConfig: Config | null) => {
   }, [reset]);
 
   const next = useCallback(() => {
-    if (currentProgram === null || currentProgram === "halt") return;
+    if (currentProgram === null) return false;
+    if (currentProgram === "halt" || step > N_STEP) {
+      setEndInput([...input]);
+      return false;
+    }
     setStep((prev) => prev + 1);
 
     const i = input[currentInput];
@@ -57,18 +68,14 @@ export const useTuring = (initialConfig: Config | null) => {
 
   const [simulating, setSimulating] = useState(false);
   useEffect(() => {
-    if (
-      currentProgram === null ||
-      currentProgram === "halt" ||
-      !simulating ||
-      step > N_STEP
-    ) {
+    if (!simulating) {
       setSimulating(false);
       return;
     }
     const timeout = setTimeout(() => {
-      next();
-      setSimulating(true);
+      const result = next();
+      if (result === false) setSimulating(false);
+      else setSimulating(true);
     }, 200);
     return () => clearTimeout(timeout);
   }, [next, currentProgram, simulating, step]);
@@ -81,5 +88,7 @@ export const useTuring = (initialConfig: Config | null) => {
     currentProgram,
     reset,
     setSimulating,
+    endInput,
+    initialInput,
   };
 };

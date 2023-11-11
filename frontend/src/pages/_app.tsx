@@ -41,7 +41,16 @@ const App = ({ Component, pageProps }: AppProps) => {
         <></>
       ) : (
         <WagmiConfig config={wagmiConfig}>
-          <ChakraProvider theme={theme}>
+          <ChakraProvider
+            theme={theme}
+            toastOptions={{
+              defaultOptions: {
+                position: "top-right",
+                isClosable: true,
+                duration: 3000,
+              },
+            }}
+          >
             <QueryClientProvider client={client}>
               <GoogleAnalytics trackPageViews />
               <Component {...pageProps} />

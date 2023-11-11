@@ -1,3 +1,4 @@
+import { BitText } from "@/components/Text/BitText";
 import { AppHeader, Navbar, Section } from "@/components/common";
 import { PUZZLE_ABI, getContract } from "@/constants/contracts";
 import { parseInputOutputTape } from "@/interfaces/config";
@@ -17,22 +18,9 @@ import {
   Text,
   chakra,
 } from "@chakra-ui/react";
+import Link from "next/link";
 import { useState } from "react";
 import { useChainId, useContractInfiniteReads, useContractRead } from "wagmi";
-
-const BitText = chakra(Text, {
-  baseStyle: {
-    flexShrink: 0,
-    border: "1px solid black",
-    overflowX: "auto",
-    lineHeight: 0.6,
-    boxSize: "24px",
-    fontSize: "lg",
-    whiteSpace: "pre",
-    textAlign: "center",
-    p: 1,
-  },
-});
 
 export const PuzzlesPage = () => {
   const chainId = useChainId();
@@ -79,7 +67,9 @@ export const PuzzlesPage = () => {
 
               return (
                 <Card key={i} p={4}>
-                  <Text fontSize="xl">{p.name}</Text>
+                  <Text fontSize="xl" as="b">
+                    {p.name}
+                  </Text>
                   <Text>{formatAddress(p.creator)}</Text>
                   <Stack align="end" spacing={0}>
                     <Text as="b">Start:</Text>
@@ -110,7 +100,13 @@ export const PuzzlesPage = () => {
                     </HStack>
                   </Stack>
                   <Divider my={4} opacity={0.1} />
-                  <Button colorScheme="primary">Play</Button>
+                  <Button
+                    colorScheme="primary"
+                    as={Link}
+                    href={`/?id=${Number(page) * 10 + i}`}
+                  >
+                    Play
+                  </Button>
                 </Card>
               );
             })}

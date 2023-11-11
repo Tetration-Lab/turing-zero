@@ -5,6 +5,7 @@ import {
   TOTAL_STATE_SIZE,
 } from "@/constants/turing";
 import { Config } from "@/interfaces/config";
+import { useToast } from "@chakra-ui/react";
 import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
 import _ from "lodash";
@@ -12,9 +13,15 @@ import { useState } from "react";
 
 export const useProver = () => {
   const [isProving, setIsProving] = useState(false);
+  const toast = useToast();
+
   const proveTuring = async (config: Config) => {
     try {
       setIsProving(true);
+      toast({
+        title: "Generating proof...",
+        status: "info",
+      });
 
       const circuit = await import("../../public/circuits/turing_zero.json");
       const backend = new BarretenbergBackend(circuit as any);
@@ -90,7 +97,6 @@ export const useProver = () => {
         final_state: state,
       });
 
-      console.log("Finished generating proof");
       let start = 0n;
       for (let i = 0; i < TAPE_SIZE; i++) {
         start += BigInt(tapeInit[i]) << BigInt(i * 8);
@@ -99,16 +105,21 @@ export const useProver = () => {
       for (let i = 0; i < TAPE_SIZE; i++) {
         end += BigInt(tapeOut[i]) << BigInt(i * 8);
       }
-      console.log("start", start);
-      console.log("end", end);
-      console.log(new Buffer(proof.proof).toString("hex"));
-      console.log(
-        "proof",
-        proof.publicInputs.map((e) => new Buffer(e).readIntBE(0, 32))
-      );
-      console.log("isvalid?", await noir.verifyFinalProof(proof));
-    } catch (e) {
-      console.error(e);
+      toast({
+        title: "Proof generated!",
+        status: "success",
+      });
+      return {
+        proof,
+        finalState: state,
+      };
+    } catch (e: any) {
+      toast({
+        title: "Error",
+        description: e.message,
+        status: "error",
+      });
+      throw e;
     } finally {
       setIsProving(false);
     }

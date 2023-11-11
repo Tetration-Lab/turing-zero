@@ -39,8 +39,8 @@
     "react-hook-form": "^7.47.0",
     "react-icons": "^4.11.0",
     "typescript": "5.0.4",
-    "viem": "^1.16.5",
-    "wagmi": "^1.4.3",
+    "viem": "^1.18.9",
+    "wagmi": "^1.4.6",
     "zustand": "^4.4.3"
   },
   "packageManager": "yarn@3.6.1",

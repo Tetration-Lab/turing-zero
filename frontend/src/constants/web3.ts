@@ -57,6 +57,7 @@ export const web3Modal = createWeb3Modal({
   themeVariables: {
     "--w3m-font-family": theme.fonts.heading,
     "--w3m-accent": theme.colors.primary.accent,
+    "--w3m-z-index": 100000,
   },
 });
 

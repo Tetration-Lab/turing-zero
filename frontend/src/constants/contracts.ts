@@ -18,6 +18,8 @@ export const ERC20_ABI = parseAbi([
 export const PUZZLE_ABI = parseAbi([
   "struct TapePuzzle { address creator; uint256 startTape; uint256 endTape; string name; }",
   "function getPuzzles(uint limit, uint offset) view returns (TapePuzzle[] memory)",
+  "function puzzles(uint256 id) view returns (TapePuzzle memory)",
+  "function solvedPuzzles(address addr, uint256 id) view returns (bool)",
   "function createPuzzle(string calldata name, uint256 startTape, uint256 endTape) returns (uint256)",
   "function submitPuzzle(uint256 puzzleId, uint256 finalState, bytes calldata proof)",
 ]);
