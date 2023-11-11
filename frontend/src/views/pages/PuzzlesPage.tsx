@@ -2,13 +2,17 @@ import { AppHeader, Navbar, Section } from "@/components/common";
 import { PUZZLE_ABI, getContract } from "@/constants/contracts";
 import { parseInputOutputTape } from "@/interfaces/config";
 import { formatAddress } from "@/utils/address";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Button,
   Card,
   Divider,
   HStack,
   Heading,
+  Icon,
+  IconButton,
   SimpleGrid,
+  Spacer,
   Stack,
   Text,
   chakra,
@@ -34,7 +38,7 @@ export const PuzzlesPage = () => {
   const chainId = useChainId();
   const [page, setPage] = useState(0n);
 
-  const { data, isLoading } = useContractRead({
+  const { data, isLoading, isError } = useContractRead({
     abi: PUZZLE_ABI,
     address: getContract(chainId),
     functionName: "getPuzzles",
@@ -48,6 +52,23 @@ export const PuzzlesPage = () => {
         <Stack>
           <Heading>Puzzles</Heading>
           <Text>Explore Turing Zero Puzzles!</Text>
+          <HStack>
+            <Spacer />
+            <IconButton
+              icon={<Icon as={ChevronLeftIcon} />}
+              aria-label="left"
+              size="sm"
+              isDisabled={page === 0n}
+              onClick={() => setPage((p) => p - 1n)}
+            />
+            <IconButton
+              icon={<Icon as={ChevronRightIcon} />}
+              aria-label="right"
+              size="sm"
+              isDisabled={(data ?? []).length === 0}
+              onClick={() => setPage((p) => p + 1n)}
+            />
+          </HStack>
           <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }}>
             {data?.map((p, i) => {
               const inputTape = parseInputOutputTape(p.startTape);
@@ -70,8 +91,8 @@ export const PuzzlesPage = () => {
                     >
                       {inputTape
                         .slice(firstOutputIndex, lastOutputIndex)
-                        .map((e) => (
-                          <BitText>{e}</BitText>
+                        .map((e, i) => (
+                          <BitText key={i}>{e}</BitText>
                         ))}
                     </HStack>
                     <Text as="b">End:</Text>
@@ -83,13 +104,13 @@ export const PuzzlesPage = () => {
                     >
                       {outputTape
                         .slice(firstOutputIndex, lastOutputIndex)
-                        .map((e) => (
-                          <BitText>{e}</BitText>
+                        .map((e, i) => (
+                          <BitText key={i}>{e}</BitText>
                         ))}
                     </HStack>
                   </Stack>
-                  <Divider my={2} />
-                  <Button>Play</Button>
+                  <Divider my={4} opacity={0.1} />
+                  <Button colorScheme="primary">Play</Button>
                 </Card>
               );
             })}
