@@ -85,7 +85,9 @@ export const HomePage = () => {
         );
         Object.entries(groupByTarget).forEach(([target, entries]) => {
           const label = entries.map((e) => {
-            return `${e.key[0]}->${e.go[0]}`;
+            return `${e.key[0]}?g${e.go[0]}${
+              e.write !== undefined ? `w${e.write}` : ""
+            }`;
           });
 
           const isSelected =
