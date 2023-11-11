@@ -22,6 +22,7 @@ import { Editor } from "@monaco-editor/react";
 import { useTuring } from "@/hooks/useTuring";
 import DagreGraph, { d3Node, d3Link, labelType } from "dagre-d3-react";
 import styles from "@/styles/turing.module.css";
+import { useProver } from "@/hooks/useProver";
 
 export const HomePage = () => {
   const {
@@ -100,6 +101,7 @@ export const HomePage = () => {
   }, [config]);
 
   const [resetPosition, setResetPosition] = useState(false);
+  const prover = useProver();
 
   return (
     <>
@@ -185,6 +187,9 @@ export const HomePage = () => {
               <Button onClick={turing.reset} colorScheme="red">
                 Reset
               </Button>
+              <Button onClick={prover.prove} colorScheme="blue">
+                Prove
+              </Button>
               <Button onClick={() => setResetPosition((e) => !e)}>
                 Reset Position
               </Button>
@@ -212,6 +217,7 @@ export const HomePage = () => {
                 //}}
               />
             </Box>
+            <Box h="32px" />
           </Stack>
         </Stack>
         <Footer />
