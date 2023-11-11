@@ -9,7 +9,6 @@ import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
 import _ from "lodash";
 import { useState } from "react";
-import { fromBytes } from "viem";
 
 export const useProver = () => {
   const [isProving, setIsProving] = useState(false);

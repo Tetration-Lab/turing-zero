@@ -19,8 +19,11 @@ import { initConfigString } from "@/constants/config";
 import { Config, parseConfig } from "@/interfaces/config";
 import { Editor } from "@monaco-editor/react";
 import { useTuring } from "@/hooks/useTuring";
-// import DagreGraph, { d3Node, d3Link, labelType } from "dagre-d3-react";
-import DagreGraph, {d3Node, d3Link, labelType} from "@/components/common/DagreGraph";
+import DagreGraph, {
+  d3Node,
+  d3Link,
+  labelType,
+} from "@/components/common/DagreGraph";
 import styles from "@/styles/turing.module.css";
 import { useProver } from "@/hooks/useProver";
 
@@ -73,7 +76,6 @@ export const HomePage = () => {
   }, [config, turing.currentProgram]);
 
   const convertLink = useMemo((): d3Link[] => {
-
     const links: d3Link[] = [];
     if (config) {
       Object.keys(config.states).forEach((name) => {

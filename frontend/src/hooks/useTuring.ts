@@ -69,7 +69,7 @@ export const useTuring = (initialConfig: Config | null) => {
     const timeout = setTimeout(() => {
       next();
       setSimulating(true);
-    }, 500);
+    }, 200);
     return () => clearTimeout(timeout);
   }, [next, currentProgram, simulating, step]);
 

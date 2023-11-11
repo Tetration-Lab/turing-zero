@@ -23,6 +23,10 @@ const MENU: Menu[] = [
     label: "Home",
     href: "/",
   },
+  {
+    label: "Puzzles",
+    href: "/puzzles",
+  },
 ];
 
 declare global {
