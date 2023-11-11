@@ -19,7 +19,7 @@ import { initConfigString } from "@/constants/config";
 import { Config, parseConfig } from "@/interfaces/config";
 import { Editor } from "@monaco-editor/react";
 import { useTuring } from "@/hooks/useTuring";
-import DagreGraph, {d3Node, d3Link, labelType} from "dagre-d3-react"
+import DagreGraph, { d3Node, d3Link, labelType } from "dagre-d3-react";
 import styles from "@/styles/turing.module.css";
 
 export const HomePage = () => {
@@ -53,47 +53,54 @@ export const HomePage = () => {
 
   const turing = useTuring(config);
 
-  const convertNode = ():d3Node[] => {
+  const convertNode = useMemo((): d3Node[] => {
     if (config) {
-      const nodes = Object.keys(config?.states).map((s) =>  {
-        const labelType: labelType = 'string'
+      const nodes = Object.keys(config.states).map((s) => {
+        const labelType: labelType = "string";
         return {
           id: s,
           label: s,
           labelType,
-          class: styles.turingNode
-        }
+          class: styles.turingNode,
+        };
       });
       nodes.push({
-        id: 'halt',
-        label: 'halt',
-        labelType: 'string',
-        class: styles.turingNode
-      })
+        id: "halt",
+        label: "halt",
+        labelType: "string",
+        class: styles.turingNode,
+      });
       return nodes;
-    } else return []
-  }
+    } else return [];
+  }, [config]);
 
-  const convertLink = (): d3Link[] => {
-    const cfg = JSON.parse(code)
-    const links: d3Link[] = []
+  const convertLink = useMemo((): d3Link[] => {
+    const links: d3Link[] = [];
     if (config) {
-      Object.keys(cfg.states).map(name => {
-        const state = cfg.states[name]
-        Object.keys(state).map(input => {
-          const command = state[input]
-          const target = command.to ? command.to : name
+      Object.keys(config.states).forEach((name) => {
+        const state = config.states[name];
+        const groupByTarget = _.groupBy(
+          Object.entries(state).map((e) => ({
+            key: e[0],
+            ...e[1],
+          })),
+          "to"
+        );
+        Object.entries(groupByTarget).forEach(([target, entries]) => {
+          const label = entries.map((e) => {
+            return `${e.key[0]}->${e.go[0]}`;
+          });
           links.push({
             source: name,
-            target,
-            label: input,
-            class: styles.turingPath
-          })
-        })
-      })
+            target: target === "undefined" ? name : target,
+            label: `[${label.join(",")}]`,
+            class: styles.turingPath,
+          });
+        });
+      });
     }
-    return links
-  }
+    return links;
+  }, [config]);
 
   return (
     <>
@@ -132,33 +139,30 @@ export const HomePage = () => {
                 </Tooltip>
               ))}
             </Wrap>
-            <DagreGraph 
-              nodes={convertNode() ?? []}
-              links={convertLink() ?? []}
+            <DagreGraph
+              nodes={convertNode ?? []}
+              links={convertLink ?? []}
               config={{
-                rankdir: 'LR',
-                align: 'DL',
-                ranker: 'tight-tree'
+                rankdir: "LR",
+                align: "DL",
+                ranker: "tight-tree",
               }}
-              // width='100'
-              // height='100'
+              height="40dvh"
               animate={1000}
-              shape='circle'
+              shape="circle"
               fitBoundaries
               zoomable
-              >
-
-            </DagreGraph>
+            />
             <SimpleGrid
               columns={turing.input.length + 3}
               width="fit-content"
               alignSelf="center"
             >
               {[
-                config?.null,
-                config?.null,
+                config?.empty,
+                config?.empty,
                 ...turing.input.split(""),
-                config?.null,
+                config?.empty,
               ].map((c) => (
                 <Text
                   w="30px"
@@ -184,7 +188,7 @@ export const HomePage = () => {
                 language="json"
                 data-color-mode="light"
                 onChange={(value) => setCodeDebounced(value ?? "")}
-                height="50vh"
+                height="30vh"
                 className="editor"
                 //style={{
                 //fontSize: 14,

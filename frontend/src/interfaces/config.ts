@@ -4,11 +4,11 @@ export type BinDigit = "0" | "1";
 
 export interface Config {
   input: string;
-  null: string;
+  empty: string;
   start: string;
   states: {
     [state: string]: {
-      [key in "0" | "1" | "null"]: {
+      [key in "0" | "1" | "empty"]: {
         write?: 0 | 1;
         to?: string | "halt";
         go: "left" | "right";
@@ -22,7 +22,7 @@ export const parseConfig = (config: any): Config => {
     throw new Error("Config must be an object");
   }
 
-  const { input, null: nullSymbol, start, states } = config;
+  const { input, empty: nullSymbol, start, states } = config;
 
   // check if input consists of only 0s and 1s
   if (!/^[01]+$/.test(input)) {
@@ -63,7 +63,7 @@ export const parseConfig = (config: any): Config => {
         const list = key.replaceAll("[", "").replaceAll("]", "").split(",");
         for (const s of list) {
           const sym = s.trim();
-          if (!["0", "1", "null", undefined].includes(sym)) {
+          if (!["0", "1", "empty", undefined].includes(sym)) {
             throw new Error("Invalid symbol");
           }
           allStates.push([sym, value]);
@@ -75,7 +75,7 @@ export const parseConfig = (config: any): Config => {
 
   return {
     input,
-    null: nullSymbol,
+    empty: nullSymbol,
     start,
     states: constructedStates as any,
   };

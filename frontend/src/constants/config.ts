@@ -1,13 +1,13 @@
 export const initConfigString: string = `{
     "input": "1011",
-    "null": " ",
+    "empty": " ",
     "start": "go-right",
     "states": {
       "go-right": {
         "[0, 1]": {
           "go": "right"
         },
-        "null": {
+        "empty": {
           "go": "left",
           "to": "carry"
         }
@@ -17,7 +17,7 @@ export const initConfigString: string = `{
           "write": 0,
           "go": "left"
         },
-        "[0, null]": {
+        "[0, empty]": {
           "write": 1,
           "go": "left",
           "to": "halt"
