@@ -11,9 +11,24 @@ import {
   SimpleGrid,
   Stack,
   Text,
+  chakra,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useChainId, useContractInfiniteReads, useContractRead } from "wagmi";
+
+const BitText = chakra(Text, {
+  baseStyle: {
+    flexShrink: 0,
+    border: "1px solid black",
+    overflowX: "auto",
+    lineHeight: 0.6,
+    boxSize: "24px",
+    fontSize: "lg",
+    whiteSpace: "pre",
+    textAlign: "center",
+    p: 1,
+  },
+});
 
 export const PuzzlesPage = () => {
   const chainId = useChainId();
@@ -45,40 +60,34 @@ export const PuzzlesPage = () => {
                 <Card key={i} p={4}>
                   <Text fontSize="xl">{p.name}</Text>
                   <Text>{formatAddress(p.creator)}</Text>
-                  <HStack align="center">
-                    <Text as="b" w="48px">
-                      Start:
-                    </Text>
-                    {inputTape
-                      .slice(firstOutputIndex, lastOutputIndex)
-                      .map((e) => (
-                        <Text
-                          lineHeight={0.8}
-                          boxSize="14px"
-                          fontSize="lg"
-                          whiteSpace="pre-line"
-                        >
-                          {e}
-                        </Text>
-                      ))}
-                  </HStack>
-                  <HStack>
-                    <Text as="b" w="48px">
-                      End:
-                    </Text>
-                    {outputTape
-                      .slice(firstOutputIndex, lastOutputIndex)
-                      .map((e) => (
-                        <Text
-                          lineHeight={0.8}
-                          boxSize="14px"
-                          fontSize="lg"
-                          whiteSpace="pre"
-                        >
-                          {e}
-                        </Text>
-                      ))}
-                  </HStack>
+                  <Stack align="end" spacing={0}>
+                    <Text as="b">Start:</Text>
+                    <HStack
+                      justify="center"
+                      w="100%"
+                      spacing={0}
+                      scrollSnapAlign="center"
+                    >
+                      {inputTape
+                        .slice(firstOutputIndex, lastOutputIndex)
+                        .map((e) => (
+                          <BitText>{e}</BitText>
+                        ))}
+                    </HStack>
+                    <Text as="b">End:</Text>
+                    <HStack
+                      justify="center"
+                      w="100%"
+                      spacing={0}
+                      scrollSnapAlign="center"
+                    >
+                      {outputTape
+                        .slice(firstOutputIndex, lastOutputIndex)
+                        .map((e) => (
+                          <BitText>{e}</BitText>
+                        ))}
+                    </HStack>
+                  </Stack>
                   <Divider my={2} />
                   <Button>Play</Button>
                 </Card>

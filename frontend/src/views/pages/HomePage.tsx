@@ -204,23 +204,25 @@ export const HomePage = () => {
               },
             }}
           >
-            <DagreGraph
-              className="turing-graph"
-              key={`${resetPosition}`}
-              nodes={convertNode}
-              links={convertLink}
-              config={{
-                rankdir: "LR",
-                align: "DL",
-                ranker: "tight-tree",
-              }}
-              width="100%"
-              height="100%"
-              animate={1000}
-              shape="circle"
-              fitBoundaries
-              zoomable
-            />
+            {config && (
+              <DagreGraph
+                className="turing-graph"
+                key={`${resetPosition}`}
+                nodes={convertNode}
+                links={convertLink}
+                config={{
+                  rankdir: "LR",
+                  align: "DL",
+                  ranker: "tight-tree",
+                }}
+                width="100%"
+                height="100%"
+                animate={1000}
+                shape="circle"
+                fitBoundaries
+                zoomable
+              />
+            )}
           </Box>
           <HStack justify="center">
             <Text>
