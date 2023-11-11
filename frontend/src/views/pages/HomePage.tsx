@@ -8,6 +8,7 @@ import {
   Box,
   SimpleGrid,
   HStack,
+  Circle,
 } from "@chakra-ui/react";
 import { Section, Navbar, Footer, AppHeader } from "@/components/common";
 import { useAccount, useChainId, useSwitchNetwork } from "wagmi";
@@ -162,6 +163,20 @@ export const HomePage = () => {
               fitBoundaries
               zoomable
             />
+            <HStack justify="center">
+              <HStack>
+                <Circle size="12px" bg="red" />
+                <Text>Current State</Text>
+              </HStack>
+              <HStack>
+                <Circle size="12px" bg="blue" />
+                <Text>Next State</Text>
+              </HStack>
+              <Text>x? = if x, gx = go x, wx = write x</Text>
+            </HStack>
+            <HStack justify="center">
+              <Text>Step: {turing.step}</Text>
+            </HStack>
             <SimpleGrid
               columns={turing.input.length}
               width="fit-content"
@@ -170,6 +185,7 @@ export const HomePage = () => {
               {turing.input.split("").map((c, i) => (
                 <Text
                   key={i}
+                  as="b"
                   w="30px"
                   fontSize="xl"
                   borderWidth="1px"

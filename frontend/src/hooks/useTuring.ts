@@ -1,7 +1,9 @@
+import { N_STEP } from "@/constants/turing";
 import { Config } from "@/interfaces/config";
 import { useCallback, useEffect, useState } from "react";
 
 export const useTuring = (initialConfig: Config | null) => {
+  const [step, setStep] = useState(0);
   const [input, setInput] = useState("");
   const [currentInput, setCurrentInput] = useState(0);
   const [currentProgram, setCurrentProgram] = useState<string | "halt" | null>(
@@ -9,6 +11,7 @@ export const useTuring = (initialConfig: Config | null) => {
   );
 
   const reset = useCallback(() => {
+    setStep(0);
     setInput(`  ${initialConfig?.input}  ` ?? "");
     setCurrentInput(2);
     setCurrentProgram(initialConfig?.start ?? null);
@@ -20,6 +23,8 @@ export const useTuring = (initialConfig: Config | null) => {
 
   const next = useCallback(() => {
     if (currentProgram === null || currentProgram === "halt") return;
+    setStep((prev) => prev + 1);
+
     const i = input.split("")[currentInput];
     const currentChar = i === " " ? "empty" : i;
     const currentProgramChar =
@@ -43,7 +48,12 @@ export const useTuring = (initialConfig: Config | null) => {
 
   const [simulating, setSimulating] = useState(false);
   useEffect(() => {
-    if (currentProgram === null || currentProgram === "halt" || !simulating) {
+    if (
+      currentProgram === null ||
+      currentProgram === "halt" ||
+      !simulating ||
+      step > N_STEP
+    ) {
       setSimulating(false);
       return;
     }
@@ -52,9 +62,10 @@ export const useTuring = (initialConfig: Config | null) => {
       setSimulating(true);
     }, 500);
     return () => clearTimeout(timeout);
-  }, [next, currentProgram, simulating]);
+  }, [next, currentProgram, simulating, step]);
 
   return {
+    step,
     input,
     next,
     currentInput,
