@@ -1,7 +1,5 @@
 export const initConfigString: string = `{
     "input": "1011",
-    "empty": " ",
-    "start": "go-right",
     "states": {
       "go-right": {
         "[0, 1]": {

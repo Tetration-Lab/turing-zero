@@ -1,10 +1,11 @@
-import { N_STEP } from "@/constants/turing";
+import { N_STEP, TAPE_SIZE } from "@/constants/turing";
 import { Config } from "@/interfaces/config";
+import _ from "lodash";
 import { useCallback, useEffect, useState } from "react";
 
 export const useTuring = (initialConfig: Config | null) => {
   const [step, setStep] = useState(0);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState<("0" | "1" | " ")[]>([]);
   const [currentInput, setCurrentInput] = useState(0);
   const [currentProgram, setCurrentProgram] = useState<string | "halt" | null>(
     null
@@ -12,9 +13,17 @@ export const useTuring = (initialConfig: Config | null) => {
 
   const reset = useCallback(() => {
     setStep(0);
-    setInput(`  ${initialConfig?.input}  ` ?? "");
-    setCurrentInput(2);
-    setCurrentProgram(initialConfig?.start ?? null);
+    const inp = _.range(TAPE_SIZE).map(() => " ");
+    if (initialConfig) {
+      inp.splice(
+        TAPE_SIZE / 2 - initialConfig.input.length / 2,
+        initialConfig.input.length,
+        ...initialConfig.input.split("")
+      );
+      setInput(inp as ("0" | "1" | " ")[]);
+      setCurrentProgram(Object.keys(initialConfig.states)?.[0] ?? null);
+      setCurrentInput(TAPE_SIZE / 2 - initialConfig.input.length / 2);
+    }
   }, [initialConfig]);
 
   useEffect(() => {
@@ -25,16 +34,16 @@ export const useTuring = (initialConfig: Config | null) => {
     if (currentProgram === null || currentProgram === "halt") return;
     setStep((prev) => prev + 1);
 
-    const i = input.split("")[currentInput];
+    const i = input[currentInput];
     const currentChar = i === " " ? "empty" : i;
     const currentProgramChar =
       initialConfig?.states[currentProgram][
         currentChar as "0" | "1" | "empty"
       ]!;
     if (currentProgramChar?.write !== undefined) {
-      const newInput = input.split("");
+      const newInput = [...input];
       newInput[currentInput] = `${currentProgramChar.write}`;
-      setInput(newInput.join(""));
+      setInput(newInput);
     }
     if (currentProgramChar?.to !== undefined) {
       setCurrentProgram(currentProgramChar.to);

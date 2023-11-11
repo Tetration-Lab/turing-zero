@@ -4,8 +4,6 @@ export type BinDigit = "0" | "1";
 
 export interface Config {
   input: string;
-  empty: string;
-  start: string;
   states: {
     [state: string]: {
       [key in "0" | "1" | "empty"]: {
@@ -22,16 +20,11 @@ export const parseConfig = (config: any): Config => {
     throw new Error("Config must be an object");
   }
 
-  const { input, empty: nullSymbol, start, states } = config;
+  const { input, states } = config;
 
   // check if input consists of only 0s and 1s
   if (!/^[01]+$/.test(input)) {
     throw new Error("Input must consist of only 0s and 1s");
-  }
-
-  // check if start is a valid state
-  if (!states[start]) {
-    throw new Error("Start state must be a valid state");
   }
 
   const constructedStates = Object.fromEntries(
@@ -75,8 +68,6 @@ export const parseConfig = (config: any): Config => {
 
   return {
     input,
-    empty: nullSymbol,
-    start,
     states: constructedStates as any,
   };
 };

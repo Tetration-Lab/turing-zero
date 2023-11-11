@@ -1,4 +1,9 @@
-import { N_STEP } from "@/constants/turing";
+import {
+  CHAR_SIZE,
+  N_STEP,
+  TAPE_SIZE,
+  TOTAL_STATE_SIZE,
+} from "@/constants/turing";
 import { Config } from "@/interfaces/config";
 import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
@@ -16,11 +21,11 @@ export const useProver = () => {
       const noir = new Noir(circuit as any, backend);
       console.log("Generating proof...");
 
-      const tapeInit = _.range(0, 32).map(() => 0);
+      const tapeInit = _.range(0, TAPE_SIZE).map(() => 0);
       const configInit = config.input.split("").map((c) => parseInt(c) + 1);
-      tapeInit.splice(16, configInit.length, ...configInit);
-      const write = _.range(0, 30).map(() => 0);
-      const move = _.range(0, 30).map(() => 1);
+      tapeInit.splice(TAPE_SIZE / 2, configInit.length, ...configInit);
+      const write = _.range(0, TOTAL_STATE_SIZE).map(() => 0);
+      const move = _.range(0, TOTAL_STATE_SIZE).map(() => 1);
       const stateTransition = _.range(0, 30).map(() => 0);
 
       const haltIndex = Object.keys(config.states).length;
@@ -31,19 +36,19 @@ export const useProver = () => {
           const c = char.trim();
           const charIndex = c === "0" ? 1 : c === "1" ? 2 : 0;
           if (transition.write !== undefined) {
-            write[i * 3 + charIndex] = transition.write + 1;
+            write[i * CHAR_SIZE + charIndex] = transition.write + 1;
           } else {
-            write[i * 3 + charIndex] = charIndex;
+            write[i * CHAR_SIZE + charIndex] = charIndex;
           }
           if (transition.go === "right") {
-            move[i * 3 + charIndex] = 0;
+            move[i * CHAR_SIZE + charIndex] = 0;
           } else {
-            move[i * 3 + charIndex] = 2;
+            move[i * CHAR_SIZE + charIndex] = 2;
           }
           if (transition?.to === "halt") {
-            stateTransition[i * 3 + charIndex] = haltIndex;
+            stateTransition[i * CHAR_SIZE + charIndex] = haltIndex;
           } else {
-            stateTransition[i * 3 + charIndex] = _.indexOf(
+            stateTransition[i * CHAR_SIZE + charIndex] = _.indexOf(
               Object.keys(config.states),
               transition.to ?? name
             );
@@ -52,18 +57,24 @@ export const useProver = () => {
       });
 
       // config halt state
-      write.splice(haltIndex * 3, 3, 0, 1, 2);
-      move.splice(haltIndex * 3, 3, 1, 1, 1);
-      stateTransition.splice(haltIndex * 3, 3, haltIndex, haltIndex, haltIndex);
+      write.splice(haltIndex * CHAR_SIZE, CHAR_SIZE, 0, 1, 2);
+      move.splice(haltIndex * CHAR_SIZE, CHAR_SIZE, 1, 1, 1);
+      stateTransition.splice(
+        haltIndex * CHAR_SIZE,
+        CHAR_SIZE,
+        haltIndex,
+        haltIndex,
+        haltIndex
+      );
 
       const tapeOut = [...tapeInit];
-      let head = 16;
+      let head = TAPE_SIZE / 2;
       let state = 0;
 
       // handle tape out
       _.range(N_STEP).forEach(() => {
         const read = tapeOut[head];
-        const transitionIndex = state * 3 + read;
+        const transitionIndex = state * CHAR_SIZE + read;
         tapeOut[head] = write[transitionIndex];
         const mv = move[transitionIndex];
         head = head + 1 - mv;

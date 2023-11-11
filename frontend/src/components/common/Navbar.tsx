@@ -41,9 +41,9 @@ export const Navbar = () => {
       <Box mt={-2}>
         <Flex minH="100px" align="center">
           <Flex
-            flex={{ base: 1, md: "auto" }}
+            flex={{ base: 1, sm: "auto" }}
             ml={{ base: -2 }}
-            display={{ base: "flex", md: "none" }}
+            display={{ base: "flex", sm: "none" }}
           >
             <IconButton
               onClick={onToggle}
@@ -60,8 +60,8 @@ export const Navbar = () => {
           </Flex>
           <HStack
             flex={{ base: 1 }}
-            justify={{ base: "center", md: "start" }}
-            display={{ base: "none", md: "flex" }}
+            justify={{ base: "center", sm: "start" }}
+            display={{ base: "none", sm: "flex" }}
             align="center"
             spacing={10}
           >

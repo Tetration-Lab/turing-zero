@@ -6,7 +6,6 @@ import {
   Button,
   Tooltip,
   Box,
-  SimpleGrid,
   HStack,
   Circle,
 } from "@chakra-ui/react";
@@ -117,135 +116,130 @@ export const HomePage = () => {
       <Section>
         <Navbar />
         <Stack>
-          <Heading>{TITLE}</Heading>
-          <Text>{DESCRIPTION}</Text>
-          <Stack>
-            <Text fontSize="lg">Supported Chains</Text>
-            <Wrap spacingX={2}>
-              {chains.map((c) => (
-                <Tooltip label={c.name} key={c.id}>
-                  <Button
-                    gap={2}
-                    isLoading={isSwitching && pendingChainId === c.id}
-                    border={
-                      isConnected && chainId === c.id
-                        ? "1px solid gray"
-                        : "none"
-                    }
-                    cursor={chainId === c.id ? "default" : "pointer"}
-                    onClick={
-                      isSwitching || chainId === c.id
-                        ? undefined
-                        : async () => {
-                            if (!isConnected || !switchNetwork)
-                              web3Modal.open();
-                            else switchNetwork(c.id);
-                          }
-                    }
-                  >
-                    <Text as="b">{c.name}</Text>
-                  </Button>
-                </Tooltip>
-              ))}
-            </Wrap>
-            <DagreGraph
-              key={`${resetPosition}`}
-              nodes={convertNode}
-              links={convertLink}
-              config={{
-                rankdir: "LR",
-                align: "DL",
-                ranker: "tight-tree",
-              }}
-              height="40dvh"
-              animate={1000}
-              shape="circle"
-              fitBoundaries
-              zoomable
-            />
-            <HStack justify="center">
-              <HStack>
-                <Circle size="12px" bg="red" />
-                <Text>Current State</Text>
-              </HStack>
-              <HStack>
-                <Circle size="12px" bg="blue" />
-                <Text>Next State</Text>
-              </HStack>
-              <Text>x? = if x, gx = go x, wx = write x</Text>
-            </HStack>
-            <HStack justify="center">
-              <Text>Step: {turing.step}</Text>
-            </HStack>
-            <SimpleGrid
-              columns={turing.input.length}
-              width="fit-content"
-              alignSelf="center"
-            >
-              {turing.input.split("").map((c, i) => (
-                <Text
-                  key={i}
-                  as="b"
-                  w="30px"
-                  fontSize="xl"
-                  borderWidth="1px"
-                  borderColor={turing.currentInput === i ? "red" : "gray"}
-                  px={2}
-                  h="full"
-                >
-                  {c}
-                </Text>
-              ))}
-            </SimpleGrid>
-            <HStack justify="center">
-              <Button
-                onClick={() => turing.setSimulating(true)}
-                colorScheme="green"
-              >
-                Simulate
-              </Button>
-              <Button onClick={turing.next} colorScheme="orange">
-                Next
-              </Button>
-              <Button onClick={turing.reset} colorScheme="red">
-                Reset
-              </Button>
-              <Button
-                isLoading={prover.isProving}
-                onClick={() => config && prover.proveTuring(config)}
-                colorScheme="blue"
-              >
-                Prove
-              </Button>
-              <Button onClick={() => setResetPosition((e) => !e)}>
-                Reset Position
-              </Button>
-            </HStack>
-
-            <Box
-              sx={{
-                ".view-lines monaco-mouse-cursor-text": {
-                  fontSize: 20,
-                },
-              }}
-            >
-              <Editor
-                value={code}
-                language="json"
-                data-color-mode="light"
-                onChange={(value) => setCodeDebounced(value ?? "")}
-                height="30vh"
-                className="editor"
-                //style={{
-                //fontSize: 14,
-                //backgroundColor: "#f5f5f5",
-                //fontFamily:
-                //"ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
-                //}}
-              />
-            </Box>
-            <Box h="32px" />
+          <Stack
+            direction={{ base: "column", sm: "row" }}
+            justify="space-between"
+          >
+            <Stack>
+              <Heading>{TITLE}</Heading>
+              <Text>{DESCRIPTION}</Text>
+            </Stack>
+            <Stack>
+              <Text fontSize="lg">Supported Chains</Text>
+              <Wrap spacingX={2}>
+                {chains.map((c) => (
+                  <Tooltip label={c.name} key={c.id}>
+                    <Button
+                      gap={2}
+                      isLoading={isSwitching && pendingChainId === c.id}
+                      border={
+                        isConnected && chainId === c.id
+                          ? "1px solid gray"
+                          : "none"
+                      }
+                      cursor={chainId === c.id ? "default" : "pointer"}
+                      onClick={
+                        isSwitching || chainId === c.id
+                          ? undefined
+                          : async () => {
+                              if (!isConnected || !switchNetwork)
+                                web3Modal.open();
+                              else switchNetwork(c.id);
+                            }
+                      }
+                    >
+                      <Text as="b">{c.name}</Text>
+                    </Button>
+                  </Tooltip>
+                ))}
+              </Wrap>
+            </Stack>
           </Stack>
+          <DagreGraph
+            key={`${resetPosition}`}
+            nodes={convertNode}
+            links={convertLink}
+            config={{
+              rankdir: "LR",
+              align: "DL",
+              ranker: "tight-tree",
+            }}
+            height="40dvh"
+            animate={1000}
+            shape="circle"
+            fitBoundaries
+            zoomable
+          />
+          <HStack justify="center">
+            <HStack>
+              <Circle size="12px" bg="red" />
+              <Text>Current State</Text>
+            </HStack>
+            <HStack>
+              <Circle size="12px" bg="blue" />
+              <Text>Next State</Text>
+            </HStack>
+            <Text>x? = if x, gx = go x, wx = write x</Text>
+          </HStack>
+          <HStack justify="center">
+            <Text>Step: {turing.step}</Text>
+          </HStack>
+          <HStack
+            spacing={0}
+            w="full"
+            overflowX="auto"
+            scrollSnapAlign="center"
+            justify="center"
+          >
+            {turing.input.map((c, i) => (
+              <Text
+                key={i}
+                as="b"
+                boxSize="40px"
+                flexShrink={0}
+                fontSize="xl"
+                borderWidth="1px"
+                borderColor={turing.currentInput === i ? "red" : "gray"}
+                px={2}
+                textAlign="center"
+              >
+                {c}
+              </Text>
+            ))}
+          </HStack>
+          <Stack justify="center" direction={{ base: "column", sm: "row" }}>
+            <Button
+              onClick={() => turing.setSimulating(true)}
+              colorScheme="green"
+            >
+              Simulate
+            </Button>
+            <Button onClick={turing.next} colorScheme="orange">
+              Next
+            </Button>
+            <Button onClick={turing.reset} colorScheme="red">
+              Reset
+            </Button>
+            <Button
+              isLoading={prover.isProving}
+              onClick={() => config && prover.proveTuring(config)}
+              colorScheme="blue"
+            >
+              Prove
+            </Button>
+            <Button onClick={() => setResetPosition((e) => !e)}>
+              Reset Position
+            </Button>
+          </Stack>
+
+          <Editor
+            value={code}
+            language="json"
+            data-color-mode="light"
+            onChange={(value) => setCodeDebounced(value ?? "")}
+            height="30vh"
+          />
+          <Box h="32px" />
         </Stack>
         <Footer />
       </Section>
