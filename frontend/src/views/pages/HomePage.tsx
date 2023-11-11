@@ -19,6 +19,8 @@ import { initConfigString } from "@/constants/config";
 import { Config, parseConfig } from "@/interfaces/config";
 import { Editor } from "@monaco-editor/react";
 import { useTuring } from "@/hooks/useTuring";
+import DagreGraph, {d3Node, d3Link, labelType} from "dagre-d3-react"
+import styles from "@/styles/turing.module.css";
 
 export const HomePage = () => {
   const {
@@ -50,6 +52,48 @@ export const HomePage = () => {
   }, [code]);
 
   const turing = useTuring(config);
+
+  const convertNode = ():d3Node[] => {
+    if (config) {
+      const nodes = Object.keys(config?.states).map((s) =>  {
+        const labelType: labelType = 'string'
+        return {
+          id: s,
+          label: s,
+          labelType,
+          class: styles.turingNode
+        }
+      });
+      nodes.push({
+        id: 'halt',
+        label: 'halt',
+        labelType: 'string',
+        class: styles.turingNode
+      })
+      return nodes;
+    } else return []
+  }
+
+  const convertLink = (): d3Link[] => {
+    const cfg = JSON.parse(code)
+    const links: d3Link[] = []
+    if (config) {
+      Object.keys(cfg.states).map(name => {
+        const state = cfg.states[name]
+        Object.keys(state).map(input => {
+          const command = state[input]
+          const target = command.to ? command.to : name
+          links.push({
+            source: name,
+            target,
+            label: input,
+            class: styles.turingPath
+          })
+        })
+      })
+    }
+    return links
+  }
 
   return (
     <>
@@ -88,6 +132,23 @@ export const HomePage = () => {
                 </Tooltip>
               ))}
             </Wrap>
+            <DagreGraph 
+              nodes={convertNode() ?? []}
+              links={convertLink() ?? []}
+              config={{
+                rankdir: 'LR',
+                align: 'DL',
+                ranker: 'tight-tree'
+              }}
+              // width='100'
+              // height='100'
+              animate={1000}
+              shape='circle'
+              fitBoundaries
+              zoomable
+              >
+
+            </DagreGraph>
             <SimpleGrid
               columns={turing.input.length + 3}
               width="fit-content"

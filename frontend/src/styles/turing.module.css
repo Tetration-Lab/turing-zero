@@ -1,0 +1,14 @@
+.turingNode {
+  fill: white;
+  stroke: black;
+  stroke-width: 1.5px;
+}
+
+.turingNode text {
+  fill: black;
+}
+
+.turingPath {
+  stroke: black;
+  stroke-width: 1.5px;
+}
