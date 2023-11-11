@@ -237,8 +237,6 @@ fn main(state_init: pub [u8;SIZE], state_end: [u8;SIZE], calldata: [u8;SIZE], ca
         assert(stack_counter > 0);
     }
 
-
-
     // check end state
     // reach defined end state
     for i in 0..SIZE {
