@@ -4,7 +4,22 @@ use dep::std;
 global TAPE_SIZE: u8 = 32;
 global STATE_SIZE: u8 = 10;
 global N_SYMBOLS: u8 = 3;
-global N_STEPS: u8 = 130;
+global N_STEPS: u8 = 127;
+
+fn access(tape: [u8; TAPE_SIZE], head: u8) -> u8 {
+    let mut value: u8 = 0;
+    for i in 0..TAPE_SIZE {
+        value += (i == head) as u8 * tape[i];
+    }
+    value
+}
+
+fn modify(mut tape: [u8; TAPE_SIZE], head: u8, value: u8) -> [u8; TAPE_SIZE] {
+    for i in 0..TAPE_SIZE {
+        tape[i] = (i == head) as u8 * value + (i != head) as u8 * tape[i];
+    }
+    tape
+}
 
 fn main(tape_init: pub [u8; TAPE_SIZE], tape_out: pub [u8; TAPE_SIZE], final_state: pub u8, write: [u8; STATE_SIZE*N_SYMBOLS], move:[u8; STATE_SIZE*N_SYMBOLS], state_transition: [u8; STATE_SIZE*N_SYMBOLS]) {
     // tape support N_SYMBOLS symbols with STATE_SIZE states.
@@ -18,9 +33,9 @@ fn main(tape_init: pub [u8; TAPE_SIZE], tape_out: pub [u8; TAPE_SIZE], final_sta
 
     // run the machine for N_STEPS steps
     for _ in 0..N_STEPS {
-        let read = tape[head];
+        let read = access(tape, head);
         let transition_index = (state * N_SYMBOLS + read);
-        tape[head] = write[transition_index];
+        tape = modify(tape, head, write[transition_index]);
         let mv = move[transition_index];
         assert(mv <= 2); // 0 = right, 1 = stay, 2 = left
         head = head + 1 - mv; 

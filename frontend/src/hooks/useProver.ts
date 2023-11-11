@@ -109,6 +109,7 @@ export const useProver = () => {
       );
       console.log("isvalid?", await noir.verifyFinalProof(proof));
     } catch (e) {
+      console.error(e);
     } finally {
       setIsProving(false);
     }
