@@ -18,3 +18,8 @@
   stroke: black;
   stroke-width: 1px;
 }
+
+.turingPathSelected {
+  stroke: blue;
+  stroke-width: 1px;
+}

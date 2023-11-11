@@ -87,17 +87,23 @@ export const HomePage = () => {
           const label = entries.map((e) => {
             return `${e.key[0]}->${e.go[0]}`;
           });
+
+          const isSelected =
+            turing.currentProgram === name &&
+            entries
+              .map((e) => (e.key === "empty" ? " " : e.key))
+              .includes(turing.input[turing.currentInput]);
           links.push({
             source: name,
             target: target === "undefined" ? name : target,
             label: `[${label.join(",")}]`,
-            class: styles.turingPath,
+            class: isSelected ? styles.turingPathSelected : styles.turingPath,
           });
         });
       });
     }
     return links;
-  }, [config]);
+  }, [config, turing.input, turing.currentInput, turing.currentProgram]);
 
   const [resetPosition, setResetPosition] = useState(false);
   const prover = useProver();
