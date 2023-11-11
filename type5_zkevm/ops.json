@@ -1,0 +1,188 @@
+{
+  "00": {
+    "input": "VAL",
+    "output": "",
+    "description": "Return",
+    "details": "Return, end program and send VAL to msg sender"
+  },
+    "01": {
+        "input": "A | B",
+        "output": "A + B",
+        "description": "ADD",
+        "details": "pop A and B, push A + B"
+    },
+    "02": {
+        "input": "A | B",
+        "output": "A - B",
+        "description": "SUB",
+        "details": "pop A and B, push A - B"
+    },
+    "03": {
+        "input": "A | B",
+        "output": "A * B",
+        "description": "MUL",
+        "details": "pop A and B, push A * B"
+    },
+    "04": {
+        "input": "A | B",
+        "output": "A / B",
+        "description": "DIV",
+        "details": "pop A and B, push A / B"
+    },
+    "05": {
+        "input": "A | B",
+        "output": "A % B",
+        "description": "MOD",
+        "details": "pop A and B, push A % B"
+    },
+    "06": {
+        "input": "A | B",
+        "output": "A < B",
+        "description": "LT",
+        "details": "pop A and B, push 1 if A < B else 0"
+    },
+    "07": {
+        "input": "A | B",
+        "output": "A > B",
+        "description": "GT",
+        "details": "pop A and B, push 1 if A > B else 0"
+    },
+    "08": {
+        "input": "A | B",
+        "output": "A == B",
+        "description": "EQ",
+        "details": "pop A and B, push 1 if A == B else 0"
+    },
+    "09": {
+        "input": "A",
+        "output": "A == 0",
+        "description": "isZERO",
+        "details": "pop A, push 1 if A == 0 else 0"
+    },
+    "0a": {
+        "input": "A | B",
+        "output": "A & B",
+        "description": "AND",
+        "details": "pop A and B, push A & B"
+    },
+    "0b": {
+        "input": "A | B",
+        "output": "A | B",
+        "description": "OR",
+        "details": "pop A and B, push A | B"
+    },
+    "0c": {
+        "input": "A | B",
+        "output": "A ^ B",
+        "description": "XOR",
+        "details": "pop A and B, push A ^ B"
+    },
+    "0d": {
+        "input": "A",
+        "output": "A",
+        "description": "NOT",
+        "details": "pop A, push !A"
+    },
+    "0e": {
+        "input": "A",
+        "output": "~A",
+        "description": "NOT",
+        "details": "pop A, push ~A"
+    },
+    "0f": {
+        "input": "",
+        "output": "BALANCE",
+        "description": "BALANCE",
+        "details": "push balance of current account"
+    },
+    "10": {
+        "input": "",
+        "output": "CALLER",
+        "description": "CALLER",
+        "details": "push caller of current context"
+    },
+    "11": {
+        "input": "",
+        "output": "CALLVALUE",
+        "description": "CALLVALUE",
+        "details": "push call value of current context"
+    },
+    "12": {
+        "input": "IDX",
+        "output": "CALLDATALOAD[IDX]",
+        "description": "CALLDATALOAD",
+        "details": "push input data at index IDX"
+    },
+    "13": {
+        "input": "",
+        "output": "BLOCKNUM",
+        "description": "BLOCKNUM",
+        "details": "push current block number"
+    },
+    "14": {
+        "input": "",
+        "output": "",
+        "description": "POP",
+        "details": "pop top of stack"
+    },
+    "15": {
+        "input": "IDX",
+        "output": "MEM[IDX]",
+        "description": "MLOAD",
+        "details": "push memory at index IDX"
+    },
+    "16": {
+        "input": "IDX | VAL",
+        "output": "",
+        "description": "MSTORE",
+        "details": "pop VAL and IDX, store VAL at IDX"
+    },
+    "17": {
+        "input": "IDX",
+        "output": "STORAGE[IDX]",
+        "description": "SLOAD",
+        "details": "push storage at index IDX"
+    },
+    "18": {
+        "input": "IDX | VAL",
+        "output": "",
+        "description": "SSTORE",
+        "details": "pop VAL and IDX, store VAL at IDX"
+    },
+    "19": {
+        "input": "IDX",
+        "output": "",
+        "description": "JUMP",
+        "details": "pop IDX, jump to IDX"
+    },
+    "1a": {
+        "input": "IDX | VAL",
+        "output": "",
+        "description": "JUMPI",
+        "details": "pop VAL and IDX, jump to IDX if VAL != 0"
+    },
+    "1b": {
+        "input": "",
+        "output": "VAL",
+        "description": "PUSH [VAL]",
+        "details": "push VAL to stack. this opcode is followed by VAL"
+    },
+    "1c": {
+        "input": "A",
+        "output": "A | A",
+        "description": "DUP",
+        "details": "push A to stack"
+    },
+    "1d": {
+        "input": "A | B",
+        "output": "B | A",
+        "description": "SWAP",
+        "details": "pop A and B, push B and A"
+    },
+    "1e": {
+        "input": "",
+        "output": "",
+        "description": "REVERT",
+        "details": "revert all state changes"
+    }
+}
