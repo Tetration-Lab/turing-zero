@@ -1,5 +1,5 @@
 [package]
-name = "type4_zkevm"
+name = "type5_zkevm"
 type = "bin"
 authors = [""]
 compiler_version = ">=0.19.2"

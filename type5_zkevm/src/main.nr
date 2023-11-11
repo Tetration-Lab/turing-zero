@@ -248,6 +248,9 @@ fn main(state_init: pub [u8;SIZE], state_end: [u8;SIZE], calldata: [u8;SIZE], ca
         assert(state[i] == state_end[i]);
     }
     // reach defined end balance
+    std::println("end balance");
+    std::println(bal);
+    std::println(bal_end);
     assert(bal == bal_end);
     // reach return opcode
     assert(code[counter] == 0);
@@ -281,4 +284,11 @@ fn test_main() {
         69, // caller
         0, // return_val
     );
+}
+
+#[test]
+fn test_main2(){
+    let mut state_init: [u8;SIZE]= [0; SIZE];
+    state_init[0] = 69;
+    state_init[1] = 12;
 }
