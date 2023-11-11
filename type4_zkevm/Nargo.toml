@@ -1,8 +1,7 @@
 [package]
-name = "turing_zero"
+name = "type4_zkevm"
 type = "bin"
 authors = [""]
 compiler_version = ">=0.19.2"
-entry = "src/stack_machine_public.nr"
 
 [dependencies]
