@@ -1,7 +1,0 @@
-[package]
-name = "type4_zkevm"
-type = "bin"
-authors = [""]
-compiler_version = ">=0.19.2"
-
-[dependencies]
