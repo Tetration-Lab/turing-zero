@@ -5,7 +5,6 @@ import {
   Wrap,
   Button,
   Tooltip,
-  useToast,
   Box,
   SimpleGrid,
   HStack,
@@ -187,7 +186,11 @@ export const HomePage = () => {
               <Button onClick={turing.reset} colorScheme="red">
                 Reset
               </Button>
-              <Button onClick={prover.prove} colorScheme="blue">
+              <Button
+                isLoading={prover.isProving}
+                onClick={() => config && prover.proveTuring(config)}
+                colorScheme="blue"
+              >
                 Prove
               </Button>
               <Button onClick={() => setResetPosition((e) => !e)}>

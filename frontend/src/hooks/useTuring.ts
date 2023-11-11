@@ -43,8 +43,10 @@ export const useTuring = (initialConfig: Config | null) => {
 
   const [simulating, setSimulating] = useState(false);
   useEffect(() => {
-    if (currentProgram === null || currentProgram === "halt" || !simulating)
+    if (currentProgram === null || currentProgram === "halt" || !simulating) {
+      setSimulating(false);
       return;
+    }
     const timeout = setTimeout(() => {
       next();
       setSimulating(true);
