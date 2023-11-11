@@ -3,6 +3,6 @@ name = "turing_zero"
 type = "bin"
 authors = [""]
 compiler_version = ">=0.19.2"
-entry = "src/turing_private_program.nr"
+entry = "src/turing.nr"
 
 [dependencies]

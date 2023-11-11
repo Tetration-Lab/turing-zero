@@ -9,6 +9,7 @@ import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
 import _ from "lodash";
 import { useState } from "react";
+import { fromBytes } from "viem";
 
 export const useProver = () => {
   const [isProving, setIsProving] = useState(false);
@@ -91,7 +92,22 @@ export const useProver = () => {
       });
 
       console.log("Finished generating proof");
-      console.log(proof);
+      let start = 0n;
+      for (let i = 0; i < 32; i++) {
+        start += BigInt(tapeInit[i]) << BigInt(i * 8);
+      }
+      let end = 0n;
+      for (let i = 0; i < 32; i++) {
+        end += BigInt(tapeOut[i]) << BigInt(i * 8);
+      }
+      console.log("start", start);
+      console.log("end", end);
+      console.log(new Buffer(proof.proof).toString("hex"));
+      console.log(
+        "proof",
+        proof.publicInputs.map((e) => new Buffer(e).readIntBE(0, 32))
+      );
+      console.log("isvalid?", await noir.verifyFinalProof(proof));
     } catch (e) {
     } finally {
       setIsProving(false);
