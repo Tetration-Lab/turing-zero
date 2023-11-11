@@ -20,6 +20,7 @@
 }
 
 .turingPathSelected {
-  stroke: blue;
+  stroke: orange;
+  fill: orange;
   stroke-width: 1px;
 }

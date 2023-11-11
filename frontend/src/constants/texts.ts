@@ -1,3 +1,3 @@
-export const TITLE = "ZKVM";
-export const TITLE_SHORT = "ZKVM";
-export const DESCRIPTION = "ZKVM For Everyone!";
+export const TITLE = "zkVM";
+export const TITLE_SHORT = "zkVM";
+export const DESCRIPTION = "zkVM For Everyone!";

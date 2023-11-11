@@ -15,6 +15,7 @@ import "@fontsource/inconsolata/400.css";
 import "@fontsource/inconsolata/500.css";
 import "@fontsource/inconsolata/600.css";
 import "@fontsource/inconsolata/700.css";
+import "@fontsource/fira-code";
 
 const client = new QueryClient();
 

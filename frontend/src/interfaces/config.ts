@@ -1,3 +1,4 @@
+import { TAPE_SIZE } from "@/constants/turing";
 import _ from "lodash";
 
 export type BinDigit = "0" | "1";
@@ -8,12 +9,25 @@ export interface Config {
     [state: string]: {
       [key in "0" | "1" | "empty"]: {
         write?: 0 | 1;
-        to?: string | "halt";
-        go: "left" | "right";
+        transition?: string | "halt";
+        move: "left" | "right";
       };
     };
   };
 }
+
+export const parseInputOutputTape = (input: bigint): string[] => {
+  const out = _.range(TAPE_SIZE).map(() => " ");
+  for (let i = 0; i < TAPE_SIZE; i++) {
+    const digit = (input >> BigInt(i * 8)) & BigInt(0xff);
+    if (digit === 1n) {
+      out[i] = "0";
+    } else if (digit === 2n) {
+      out[i] = "1";
+    }
+  }
+  return out;
+};
 
 export const parseConfig = (config: any): Config => {
   if (typeof config !== "object") {
@@ -35,16 +49,16 @@ export const parseConfig = (config: any): Config => {
 
         // check if value is a valid state
         if (
-          value?.to &&
+          value?.transition &&
           !(
-            value.to === "halt" ||
-            Object.keys(states).includes(value.to as string)
+            value.transition === "halt" ||
+            Object.keys(states).includes(value.transition as string)
           )
         ) {
           throw new Error("Invalid state");
         }
         // check if go is valid
-        if (value?.go && !["left", "right"].includes(value?.go)) {
+        if (value?.move && !["left", "right"].includes(value?.move)) {
           throw new Error("Invalid go, must be left or right");
         }
         // check if write is valid

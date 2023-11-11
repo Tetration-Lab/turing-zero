@@ -92,11 +92,11 @@ export const useProver = () => {
 
       console.log("Finished generating proof");
       let start = 0n;
-      for (let i = 0; i < 32; i++) {
+      for (let i = 0; i < TAPE_SIZE; i++) {
         start += BigInt(tapeInit[i]) << BigInt(i * 8);
       }
       let end = 0n;
-      for (let i = 0; i < 32; i++) {
+      for (let i = 0; i < TAPE_SIZE; i++) {
         end += BigInt(tapeOut[i]) << BigInt(i * 8);
       }
       console.log("start", start);

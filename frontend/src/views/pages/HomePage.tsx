@@ -26,6 +26,7 @@ import DagreGraph, {
 } from "@/components/common/DagreGraph";
 import styles from "@/styles/turing.module.css";
 import { useProver } from "@/hooks/useProver";
+import { N_STEP } from "@/constants/turing";
 
 export const HomePage = () => {
   const {
@@ -85,13 +86,13 @@ export const HomePage = () => {
             key: e[0],
             ...e[1],
           })),
-          "to"
+          "transition"
         );
         Object.entries(groupByTarget).forEach(([target, entries]) => {
           const label = entries.map((e) => {
-            return `${e.key[0]}?g${e.go[0]}${
-              e.write !== undefined ? `w${e.write}` : ""
-            }`;
+            return `${e.key[0]}->${
+              e.write !== undefined ? `${e.write}` : e.key[0]
+            },${e.move[0].toUpperCase()}`;
           });
 
           const isSelected =
@@ -102,7 +103,7 @@ export const HomePage = () => {
           links.push({
             source: name,
             target: target === "undefined" ? name : target,
-            label: `[${label.join(",")}]`,
+            label: `${label.join("\n")}`,
             class: isSelected ? styles.turingPathSelected : styles.turingPath,
           });
         });
@@ -116,7 +117,7 @@ export const HomePage = () => {
 
   return (
     <>
-      <AppHeader title="Bounties" />
+      <AppHeader title="Home" />
       <Section>
         <Navbar />
         <Stack>
@@ -125,7 +126,7 @@ export const HomePage = () => {
             justify="space-between"
           >
             <Stack>
-              <Heading>{TITLE}</Heading>
+              <Heading>Turing Zero {TITLE}</Heading>
               <Text>{DESCRIPTION}</Text>
             </Stack>
             <Stack>
@@ -159,57 +160,72 @@ export const HomePage = () => {
               </Wrap>
             </Stack>
           </Stack>
-          <DagreGraph
-            key={`${resetPosition}`}
-            nodes={convertNode}
-            links={convertLink}
-            config={{
-              rankdir: "LR",
-              align: "DL",
-              ranker: "tight-tree",
-            }}
-            height="40dvh"
-            animate={1000}
-            shape="circle"
-            fitBoundaries
-            zoomable
-          />
-          <HStack justify="center">
-            <HStack>
-              <Circle size="12px" bg="red" />
-              <Text>Current State</Text>
-            </HStack>
-            <HStack>
-              <Circle size="12px" bg="blue" />
-              <Text>Next State</Text>
-            </HStack>
-            <Text>x? = if x, gx = go x, wx = write x</Text>
-          </HStack>
-          <HStack justify="center">
-            <Text>Step: {turing.step}</Text>
-          </HStack>
           <HStack
             spacing={0}
             w="full"
             overflowX="auto"
+            overflowY="hidden"
             scrollSnapAlign="center"
             justify="center"
           >
             {turing.input.map((c, i) => (
-              <Text
+              <Tooltip
                 key={i}
-                as="b"
-                boxSize="40px"
-                flexShrink={0}
-                fontSize="xl"
-                borderWidth="1px"
-                borderColor={turing.currentInput === i ? "red" : "gray"}
-                px={2}
-                textAlign="center"
+                hasArrow
+                variant="red"
+                isOpen={turing.currentInput === i}
+                label={turing.currentProgram}
+                placement="bottom"
               >
-                {c}
-              </Text>
+                <Text
+                  zIndex={turing.currentInput === i ? 1 : 0}
+                  boxSize={{ base: "48px", sm: "64px" }}
+                  flexShrink={0}
+                  fontSize={{ base: "2xl", sm: "3xl" }}
+                  borderWidth={turing.currentInput === i ? "2px" : "1px"}
+                  borderColor={turing.currentInput === i ? "red" : "gray"}
+                  transition="all 0.2s ease-in-out"
+                  px={2}
+                  textAlign="center"
+                >
+                  {c}
+                </Text>
+              </Tooltip>
             ))}
+          </HStack>
+          <Box
+            w="100%"
+            h={{ base: "20vh", sm: "40vh" }}
+            p={{ base: 4, sm: 8 }}
+            position="relative"
+            sx={{
+              ".turing-graph": {
+                fontFamily: "Fira Code",
+              },
+            }}
+          >
+            <DagreGraph
+              className="turing-graph"
+              key={`${resetPosition}`}
+              nodes={convertNode}
+              links={convertLink}
+              config={{
+                rankdir: "LR",
+                align: "DL",
+                ranker: "tight-tree",
+              }}
+              width="100%"
+              height="100%"
+              animate={1000}
+              shape="circle"
+              fitBoundaries
+              zoomable
+            />
+          </Box>
+          <HStack justify="center">
+            <Text>
+              Current Step: {turing.step}, Max Step: {N_STEP}
+            </Text>
           </HStack>
           <Stack justify="center" direction={{ base: "column", sm: "row" }}>
             <Button

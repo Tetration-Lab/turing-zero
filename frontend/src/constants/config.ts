@@ -1,24 +1,24 @@
 export const initConfigString: string = `{
     "input": "1011",
     "states": {
-      "go-right": {
+      "q0": {
         "[0, 1]": {
-          "go": "right"
+          "move": "right"
         },
         "empty": {
-          "go": "left",
-          "to": "carry"
+          "move": "left",
+          "transition": "q1"
         }
       },
-      "carry": {
+      "q1": {
         "1": {
           "write": 0,
-          "go": "left"
+          "move": "left"
         },
         "[0, empty]": {
           "write": 1,
-          "go": "left",
-          "to": "halt"
+          "move": "left",
+          "transition": "halt"
         }
       }
     }

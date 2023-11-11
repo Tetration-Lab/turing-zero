@@ -10,4 +10,12 @@ export const tooltipTheme = defineStyleConfig({
     borderRadius: "md",
     [cssVar("popper-arrow-bg").variable]: "gray.500",
   }),
+  variants: {
+    red: defineStyle({
+      background: "red.500",
+      [cssVar("popper-arrow-bg").variable]: "red.500",
+      color: "gray.50",
+      shadow: 0,
+    }),
+  },
 });

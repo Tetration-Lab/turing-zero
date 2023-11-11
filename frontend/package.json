@@ -13,6 +13,7 @@
     "@chakra-ui/react": "^2.7.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@fontsource/fira-code": "^5.0.15",
     "@fontsource/inconsolata": "^5.0.15",
     "@monaco-editor/react": "^4.6.0",
     "@noir-lang/backend_barretenberg": "^0.19.2",

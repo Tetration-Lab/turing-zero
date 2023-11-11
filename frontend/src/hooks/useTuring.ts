@@ -45,10 +45,10 @@ export const useTuring = (initialConfig: Config | null) => {
       newInput[currentInput] = `${currentProgramChar.write}`;
       setInput(newInput);
     }
-    if (currentProgramChar?.to !== undefined) {
-      setCurrentProgram(currentProgramChar.to);
+    if (currentProgramChar?.transition !== undefined) {
+      setCurrentProgram(currentProgramChar.transition);
     }
-    if (currentProgramChar.go === "left") {
+    if (currentProgramChar.move === "left") {
       setCurrentInput((prev) => prev - 1);
     } else {
       setCurrentInput((prev) => prev + 1);

@@ -1070,6 +1070,11 @@
   resolved "https://registry.npmjs.org/@eslint/js/-/js-8.41.0.tgz"
   integrity sha512-LxcyMGxwmTh2lY9FwHPGWOHmYFCZvbrFCBZL4FzSSsxsRPuhrYUg/49/0KDfW8tnIEaEHtfmn6+NPN+1DqaNmA==
 
+"@fontsource/fira-code@^5.0.15":
+  version "5.0.15"
+  resolved "https://registry.yarnpkg.com/@fontsource/fira-code/-/fira-code-5.0.15.tgz#1a540ce5b6fc2db83c3c5912c76d10d8ff38aa2e"
+  integrity sha512-mcQQX2Pwlbt8NwBB+kCyldYy1eLY9hsLZ3EvWf2ciVTk1rmYZ734CU9v70qs7rTXrNLYKz8+Q9b7DLEgwsKW6A==
+
 "@fontsource/inconsolata@^5.0.15":
   version "5.0.15"
   resolved "https://registry.yarnpkg.com/@fontsource/inconsolata/-/inconsolata-5.0.15.tgz#6182b2c5eaedaaead09f56fa36e94feea971c0b3"
