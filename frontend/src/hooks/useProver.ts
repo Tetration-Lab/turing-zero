@@ -40,17 +40,17 @@ export const useProver = () => {
           } else {
             write[i * CHAR_SIZE + charIndex] = charIndex;
           }
-          if (transition.go === "right") {
+          if (transition.move === "right") {
             move[i * CHAR_SIZE + charIndex] = 0;
           } else {
             move[i * CHAR_SIZE + charIndex] = 2;
           }
-          if (transition?.to === "halt") {
+          if (transition?.transition === "halt") {
             stateTransition[i * CHAR_SIZE + charIndex] = haltIndex;
           } else {
             stateTransition[i * CHAR_SIZE + charIndex] = _.indexOf(
               Object.keys(config.states),
-              transition.to ?? name
+              transition.transition ?? name
             );
           }
         });
