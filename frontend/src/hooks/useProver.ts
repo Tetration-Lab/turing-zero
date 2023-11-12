@@ -1,10 +1,4 @@
-import {
-  CHAR_SIZE,
-  N_STEP,
-  TAPE_SIZE,
-  TOTAL_STATE_SIZE,
-} from "@/constants/turing";
-import { Config } from "@/interfaces/config";
+import { Config, toWitness } from "@/interfaces/config";
 import { useToast } from "@chakra-ui/react";
 import { BarretenbergBackend } from "@noir-lang/backend_barretenberg";
 import { Noir } from "@noir-lang/noir_js";
@@ -28,90 +22,26 @@ export const useProver = () => {
       const noir = new Noir(circuit as any, backend);
       console.log("Generating proof...");
 
-      const tapeInit = _.range(0, TAPE_SIZE).map(() => 0);
-      const configInit = config.input.split("").map((c) => parseInt(c) + 1);
-      tapeInit.splice(TAPE_SIZE / 2, configInit.length, ...configInit);
-      const write = _.range(0, TOTAL_STATE_SIZE).map(() => 0);
-      const move = _.range(0, TOTAL_STATE_SIZE).map(() => 1);
-      const stateTransition = _.range(0, 30).map(() => 0);
-
-      const haltIndex = Object.keys(config.states).length;
-
-      // config states
-      Object.entries(config.states).forEach(([name, state], i) => {
-        Object.entries(state).forEach(([char, transition]) => {
-          const c = char.trim();
-          const charIndex = c === "0" ? 1 : c === "1" ? 2 : 0;
-          if (transition.write !== undefined) {
-            write[i * CHAR_SIZE + charIndex] = transition.write + 1;
-          } else {
-            write[i * CHAR_SIZE + charIndex] = charIndex;
-          }
-          if (transition.move === "right") {
-            move[i * CHAR_SIZE + charIndex] = 0;
-          } else {
-            move[i * CHAR_SIZE + charIndex] = 2;
-          }
-          if (transition?.transition === "halt") {
-            stateTransition[i * CHAR_SIZE + charIndex] = haltIndex;
-          } else {
-            stateTransition[i * CHAR_SIZE + charIndex] = _.indexOf(
-              Object.keys(config.states),
-              transition.transition ?? name
-            );
-          }
-        });
-      });
-
-      // config halt state
-      write.splice(haltIndex * CHAR_SIZE, CHAR_SIZE, 0, 1, 2);
-      move.splice(haltIndex * CHAR_SIZE, CHAR_SIZE, 1, 1, 1);
-      stateTransition.splice(
-        haltIndex * CHAR_SIZE,
-        CHAR_SIZE,
-        haltIndex,
-        haltIndex,
-        haltIndex
-      );
-
-      const tapeOut = [...tapeInit];
-      let head = TAPE_SIZE / 2;
-      let state = 0;
-
-      // handle tape out
-      _.range(N_STEP).forEach(() => {
-        const read = tapeOut[head];
-        const transitionIndex = state * CHAR_SIZE + read;
-        tapeOut[head] = write[transitionIndex];
-        const mv = move[transitionIndex];
-        head = head + 1 - mv;
-        state = stateTransition[transitionIndex];
-      });
+      const witness = toWitness(config);
 
       const proof = await noir.generateFinalProof({
-        tape_init: tapeInit,
-        tape_out: tapeOut,
-        write,
-        move,
-        state_transition: stateTransition,
-        final_state: state,
+        tape_init: witness.tapeInit,
+        tape_out: witness.tapeOut,
+        write: witness.write,
+        move: witness.move,
+        state_transition: witness.stateTransition,
+        final_state: witness.state,
       });
 
-      let start = 0n;
-      for (let i = 0; i < TAPE_SIZE; i++) {
-        start += BigInt(tapeInit[i]) << BigInt(i * 8);
-      }
-      let end = 0n;
-      for (let i = 0; i < TAPE_SIZE; i++) {
-        end += BigInt(tapeOut[i]) << BigInt(i * 8);
-      }
+      console.log("start tape serialized", witness.start);
+      console.log("end tape serialized", witness.end);
       toast({
         title: "Proof generated!",
         status: "success",
       });
       return {
         proof,
-        finalState: state,
+        finalState: witness.state,
       };
     } catch (e: any) {
       toast({

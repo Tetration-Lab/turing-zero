@@ -14,6 +14,7 @@ import {
   Divider,
   Badge,
   Link as ChakraLink,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Section, Navbar, Footer, AppHeader } from "@/components/common";
 import { useAccount, useChainId, useContractRead } from "wagmi";
@@ -39,13 +40,19 @@ import { useConfig } from "@/useConfig";
 import { parseInputOutputTape } from "@/interfaces/config";
 import { ChainList } from "@/components/common/ChainList";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { ProofModal } from "@/components/Modal/ProofModal";
+import { WitnessModal } from "@/components/Modal/WitnessModal";
 
 export const HomePage = () => {
   const { isConnected, address } = useAccount();
   const chainId = useChainId();
 
+  const proofModal = useDisclosure();
+  const witnessModal = useDisclosure();
+
   const { code, setCodeDebounced, config } = useConfig();
   const turing = useTuring(config);
+
   const { links, nodes } = useGraphNodeLink({
     config,
     currentInput: turing.currentInput,
@@ -55,11 +62,13 @@ export const HomePage = () => {
 
   const prover = useProver();
   const txSubmitter = useSubmitTx();
+
   const [resetPosition, setResetPosition] = useState(false);
   const [proof, setProof] = useState<{
     proof: ProofData;
     finalState: number;
   } | null>(null);
+
   const reset = () => {
     turing.reset();
     setProof(null);
@@ -105,6 +114,16 @@ export const HomePage = () => {
 
   return (
     <>
+      <ProofModal
+        proof={proof?.proof}
+        isOpen={proofModal.isOpen}
+        onClose={proofModal.onClose}
+      />
+      <WitnessModal
+        config={config}
+        isOpen={witnessModal.isOpen}
+        onClose={witnessModal.onClose}
+      />
       <AppHeader title="Home" />
       <Section>
         <Navbar />
@@ -232,13 +251,20 @@ export const HomePage = () => {
               <Button onClick={reset} colorScheme="red">
                 Reset
               </Button>
+              <Button onClick={witnessModal.onOpen} colorScheme="orange">
+                View Witness
+              </Button>
             </Stack>
 
             <Grid
               templateColumns={{ base: "1fr", md: "repeat(5, 1fr)" }}
               gap={4}
             >
-              <GridItem h="40vh" order={{ base: 1, md: -1 }} colSpan={3}>
+              <GridItem
+                h={{ base: "30vh", md: "50vh" }}
+                order={{ base: 1, md: -1 }}
+                colSpan={3}
+              >
                 <Editor code={code} setCodeDebounced={setCodeDebounced} />
               </GridItem>
               <GridItem colSpan={2}>
@@ -302,13 +328,13 @@ export const HomePage = () => {
                         isDisabled={
                           !_.isEqual(turing.initialInput, puzzle.inputTape) ||
                           !_.isEqual(turing.endInput, puzzle.outputTape) ||
-                          !!proof ||
-                          solved
+                          !!proof
                         }
                         isLoading={prover.isProving}
                         onClick={async () => {
                           if (config) {
                             const proof = await prover.proveTuring(config);
+                            proofModal.onOpen();
                             setProof(proof);
                           }
                         }}
@@ -334,7 +360,11 @@ export const HomePage = () => {
                           }
                         }}
                       >
-                        {isConnected ? "Submit 🫡" : "Connect Wallet"}
+                        {isConnected
+                          ? solved
+                            ? "Solved 🥰"
+                            : "Submit 🫡"
+                          : "Connect Wallet"}
                       </Button>
                     </>
                   ) : (
