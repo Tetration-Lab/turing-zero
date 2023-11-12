@@ -1,4 +1,4 @@
-# zkVM-0
+# zkVM
 
 ```
 We build zkVM to educate people how zkVM works
