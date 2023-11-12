@@ -2,7 +2,6 @@ import {
   Text,
   Heading,
   Stack,
-  Wrap,
   Button,
   Tooltip,
   Box,
@@ -14,27 +13,16 @@ import {
   GridItem,
   Divider,
   Badge,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import { Section, Navbar, Footer, AppHeader } from "@/components/common";
-import {
-  useAccount,
-  useChainId,
-  useContractRead,
-  useSwitchNetwork,
-} from "wagmi";
-import { ZERO_ADDRESS, chains, web3Modal } from "@/constants/web3";
+import { useAccount, useChainId, useContractRead } from "wagmi";
+import { ZERO_ADDRESS, web3Modal } from "@/constants/web3";
 import _ from "lodash";
 import { DESCRIPTION, TITLE } from "@/constants/texts";
-import { useEffect, useMemo, useState } from "react";
-import { initConfigString } from "@/constants/config";
-import { Config, parseConfig, parseInputOutputTape } from "@/interfaces/config";
+import { useMemo, useState } from "react";
 import { useTuring } from "@/hooks/useTuring";
-import DagreGraph, {
-  d3Node,
-  d3Link,
-  labelType,
-} from "@/components/common/DagreGraph";
-import styles from "@/styles/turing.module.css";
+import DagreGraph from "@/components/common/DagreGraph";
 import { useProver } from "@/hooks/useProver";
 import { N_STEP } from "@/constants/turing";
 import { Editor } from "@/components/Editor";
@@ -46,90 +34,24 @@ import { BitText } from "@/components/Text/BitText";
 import { formatAddress } from "@/utils/address";
 import { ProofData } from "@noir-lang/backend_barretenberg";
 import { useSubmitTx } from "@/hooks/useSubmitTx";
+import { useGraphNodeLink } from "@/hooks/useGraphNodeLink";
+import { useConfig } from "@/useConfig";
+import { parseInputOutputTape } from "@/interfaces/config";
+import { ChainList } from "@/components/common/ChainList";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 
 export const HomePage = () => {
-  const {
-    switchNetwork,
-    isLoading: isSwitching,
-    pendingChainId,
-  } = useSwitchNetwork();
   const { isConnected, address } = useAccount();
   const chainId = useChainId();
 
-  const [code, setCode] = useState(initConfigString);
-  const setCodeDebounced = useMemo(
-    () =>
-      _.debounce((value: string) => {
-        setCode(value);
-      }, 1000),
-    []
-  );
-
-  const [config, setConfig] = useState<Config | null>(null);
-  useEffect(() => {
-    try {
-      const cfg = parseConfig(JSON.parse(code));
-      setConfig(cfg);
-    } catch (error: any) {
-      console.error(error.message);
-    }
-  }, [code]);
-
+  const { code, setCodeDebounced, config } = useConfig();
   const turing = useTuring(config);
-
-  const convertNode = useMemo((): d3Node[] => {
-    if (config) {
-      const nodes = ["halt", ...Object.keys(config.states)].map((s) => {
-        const labelType: labelType = "string";
-        return {
-          id: s,
-          label: s,
-          labelType,
-          class:
-            turing.currentProgram === s
-              ? styles.turingNodeSelected
-              : styles.turingNode,
-        };
-      });
-      return nodes;
-    } else return [];
-  }, [config, turing.currentProgram]);
-
-  const convertLink = useMemo((): d3Link[] => {
-    const links: d3Link[] = [];
-    if (config) {
-      Object.keys(config.states).forEach((name) => {
-        const state = config.states[name];
-        const groupByTarget = _.groupBy(
-          Object.entries(state).map((e) => ({
-            key: e[0],
-            ...e[1],
-          })),
-          "transition"
-        );
-        Object.entries(groupByTarget).forEach(([target, entries]) => {
-          const label = entries.map((e) => {
-            return `${e.key[0]}->${
-              e.write !== undefined ? `${e.write}` : e.key[0]
-            },${e.move[0].toUpperCase()}`;
-          });
-
-          const isSelected =
-            turing.currentProgram === name &&
-            entries
-              .map((e) => (e.key === "empty" ? " " : e.key))
-              .includes(turing.input[turing.currentInput]);
-          links.push({
-            source: name,
-            target: target === "undefined" ? name : target,
-            label: `${label.join("\n")}`,
-            class: isSelected ? styles.turingPathSelected : styles.turingPath,
-          });
-        });
-      });
-    }
-    return links;
-  }, [config, turing.input, turing.currentInput, turing.currentProgram]);
+  const { links, nodes } = useGraphNodeLink({
+    config,
+    currentInput: turing.currentInput,
+    currentProgram: turing.currentProgram,
+    input: turing.input,
+  });
 
   const prover = useProver();
   const txSubmitter = useSubmitTx();
@@ -190,41 +112,27 @@ export const HomePage = () => {
           <Stack
             direction={{ base: "column", sm: "row" }}
             justify="space-between"
+            gap={1}
           >
-            <Stack>
+            <Stack spacing={1}>
               <Heading>Turing Zero {TITLE}</Heading>
               <Text>{DESCRIPTION}</Text>
+              <Text as="i">
+                Made with love by{" "}
+                <ChakraLink isExternal href="https://www.tetrationlab.com/">
+                  Tetration Lab <ExternalLinkIcon boxSize="12px" />
+                </ChakraLink>{" "}
+                team!
+              </Text>
             </Stack>
-            <Stack>
-              <Text fontSize="lg">Supported Chains</Text>
-              <Wrap spacingX={2}>
-                {chains.map((c) => (
-                  <Tooltip label={c.name} key={c.id}>
-                    <Button
-                      gap={2}
-                      isLoading={isSwitching && pendingChainId === c.id}
-                      variant="outline"
-                      colorScheme={
-                        isConnected && chainId === c.id ? "primary" : "gray"
-                      }
-                      cursor={chainId === c.id ? "default" : "pointer"}
-                      onClick={
-                        isSwitching || chainId === c.id
-                          ? undefined
-                          : async () => {
-                              if (!isConnected || !switchNetwork)
-                                web3Modal.open();
-                              else switchNetwork(c.id);
-                            }
-                      }
-                    >
-                      <Text as="b">{c.name}</Text>
-                    </Button>
-                  </Tooltip>
-                ))}
-              </Wrap>
+            <Stack gap={1}>
+              <Text fontSize="lg" as="b">
+                Supported Chains
+              </Text>
+              <ChainList />
             </Stack>
           </Stack>
+          <Box h="24px" />
           <Stack spacing={4}>
             <HStack
               spacing={0}
@@ -274,8 +182,8 @@ export const HomePage = () => {
                 <DagreGraph
                   className="turing-graph"
                   key={`${resetPosition}`}
-                  nodes={convertNode}
-                  links={convertLink}
+                  nodes={nodes}
+                  links={links}
                   config={{
                     rankdir: "LR",
                     align: "DL",
@@ -387,7 +295,7 @@ export const HomePage = () => {
                         {!_.isEqual(turing.initialInput, puzzle.inputTape) &&
                           "Initial input is not the same!"}
                         {!_.isEqual(turing.endInput, puzzle.outputTape) &&
-                          "End input is not the same. Please simulate till end!"}
+                          "Output is not the same. Please simulate till end!"}
                       </Text>
                       <Button
                         colorScheme="telegram"

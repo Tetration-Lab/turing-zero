@@ -16,7 +16,7 @@ export interface Config {
   };
 }
 
-export const parseInputOutputTape = (input: bigint): string[] => {
+export const parseInputOutputTape = (input: bigint): ("0" | "1" | " ")[] => {
   const out = _.range(TAPE_SIZE).map(() => " ");
   for (let i = 0; i < TAPE_SIZE; i++) {
     const digit = (input >> BigInt(i * 8)) & BigInt(0xff);
@@ -26,7 +26,7 @@ export const parseInputOutputTape = (input: bigint): string[] => {
       out[i] = "1";
     }
   }
-  return out;
+  return out as ("0" | "1" | " ")[];
 };
 
 export const parseConfig = (config: any): Config => {

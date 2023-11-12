@@ -2,6 +2,7 @@ import { BitText } from "@/components/Text/BitText";
 import { AppHeader, Navbar, Section } from "@/components/common";
 import { PUZZLE_ABI, getContract } from "@/constants/contracts";
 import { parseInputOutputTape } from "@/interfaces/config";
+import { parsePuzzleFromContract } from "@/interfaces/puzzle";
 import { formatAddress } from "@/utils/address";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import {
@@ -13,11 +14,13 @@ import {
   Icon,
   IconButton,
   SimpleGrid,
+  Skeleton,
   Spacer,
   Stack,
   Text,
   chakra,
 } from "@chakra-ui/react";
+import _ from "lodash";
 import Link from "next/link";
 import { useState } from "react";
 import { useChainId, useContractInfiniteReads, useContractRead } from "wagmi";
@@ -26,7 +29,7 @@ export const PuzzlesPage = () => {
   const chainId = useChainId();
   const [page, setPage] = useState(0n);
 
-  const { data, isLoading, isError } = useContractRead({
+  const { data, isLoading } = useContractRead({
     abi: PUZZLE_ABI,
     address: getContract(chainId),
     functionName: "getPuzzles",
@@ -46,70 +49,77 @@ export const PuzzlesPage = () => {
               icon={<Icon as={ChevronLeftIcon} />}
               aria-label="left"
               size="sm"
-              isDisabled={page === 0n}
+              isDisabled={page === 0n || isLoading}
               onClick={() => setPage((p) => p - 1n)}
             />
             <IconButton
               icon={<Icon as={ChevronRightIcon} />}
               aria-label="right"
               size="sm"
-              isDisabled={(data ?? []).length === 0}
+              isDisabled={(data ?? []).length === 0 || isLoading}
               onClick={() => setPage((p) => p + 1n)}
             />
           </HStack>
-          <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }}>
-            {data?.map((p, i) => {
-              const inputTape = parseInputOutputTape(p.startTape);
-              const outputTape = parseInputOutputTape(p.endTape);
-              const firstOutputIndex = outputTape.findIndex((e) => e !== " ");
-              const lastOutputIndex =
-                outputTape.findLastIndex((e) => e !== " ") + 1;
+          <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} gap={4}>
+            {isLoading
+              ? _.range(10).map((i) => <Skeleton w="100%" h="sm" />)
+              : data?.map((p, i) => {
+                  const puzzle = parsePuzzleFromContract(
+                    Number(page) * 10 + i,
+                    p
+                  );
 
-              return (
-                <Card key={i} p={4}>
-                  <Text fontSize="xl" as="b">
-                    {p.name}
-                  </Text>
-                  <Text>{formatAddress(p.creator)}</Text>
-                  <Stack align="end" spacing={0}>
-                    <Text as="b">Start:</Text>
-                    <HStack
-                      justify="center"
-                      w="100%"
-                      spacing={0}
-                      scrollSnapAlign="center"
-                    >
-                      {inputTape
-                        .slice(firstOutputIndex, lastOutputIndex)
-                        .map((e, i) => (
-                          <BitText key={i}>{e}</BitText>
-                        ))}
-                    </HStack>
-                    <Text as="b">End:</Text>
-                    <HStack
-                      justify="center"
-                      w="100%"
-                      spacing={0}
-                      scrollSnapAlign="center"
-                    >
-                      {outputTape
-                        .slice(firstOutputIndex, lastOutputIndex)
-                        .map((e, i) => (
-                          <BitText key={i}>{e}</BitText>
-                        ))}
-                    </HStack>
-                  </Stack>
-                  <Divider my={4} opacity={0.1} />
-                  <Button
-                    colorScheme="primary"
-                    as={Link}
-                    href={`/?id=${Number(page) * 10 + i}`}
-                  >
-                    Play
-                  </Button>
-                </Card>
-              );
-            })}
+                  return (
+                    <Card key={i} p={4}>
+                      <Text fontSize="xl" as="b">
+                        {puzzle.name}
+                      </Text>
+                      <Text>{formatAddress(puzzle.creator)}</Text>
+                      <Stack align="end" spacing={0}>
+                        <Text as="b">Start:</Text>
+                        <HStack
+                          justify="center"
+                          w="100%"
+                          spacing={0}
+                          scrollSnapAlign="center"
+                        >
+                          {puzzle.inputTape
+                            .slice(
+                              puzzle.firstOutputIndex,
+                              puzzle.lastOutputIndex
+                            )
+                            .map((e, i) => (
+                              <BitText key={i}>{e}</BitText>
+                            ))}
+                        </HStack>
+                        <Text as="b">End:</Text>
+                        <HStack
+                          justify="center"
+                          w="100%"
+                          spacing={0}
+                          scrollSnapAlign="center"
+                        >
+                          {puzzle.outputTape
+                            .slice(
+                              puzzle.firstOutputIndex,
+                              puzzle.lastOutputIndex
+                            )
+                            .map((e, i) => (
+                              <BitText key={i}>{e}</BitText>
+                            ))}
+                        </HStack>
+                      </Stack>
+                      <Divider my={4} opacity={0.1} />
+                      <Button
+                        colorScheme="primary"
+                        as={Link}
+                        href={`/?id=${puzzle.id}`}
+                      >
+                        Play
+                      </Button>
+                    </Card>
+                  );
+                })}
           </SimpleGrid>
         </Stack>
       </Section>
