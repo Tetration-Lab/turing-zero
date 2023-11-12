@@ -365,6 +365,11 @@ export const HomePage = () => {
                             : "Submit 🫡"
                           : "Connect Wallet"}
                       </Button>
+                      {solved && (
+                        <Button colorScheme="green" as={Link} href="/puzzles">
+                          Explore More Puzzles
+                        </Button>
+                      )}
                     </>
                   ) : (
                     <>
@@ -374,7 +379,7 @@ export const HomePage = () => {
                         below.
                       </Text>
                       <Button colorScheme="green" as={Link} href="/puzzles">
-                        Go
+                        Explore Puzzles
                       </Button>
                     </>
                   )}
