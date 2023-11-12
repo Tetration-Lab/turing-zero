@@ -43,7 +43,7 @@ We write simple zk-EVM with only 30 Ocodes, hence "Type5" since not compatible w
 
 ##### Frontend
 
-[Type5-zkEVM](https://t5zkevm.tetrationlab.com/) is a website where you can simulate our type5 EVM in the playground, similary to [evm.codes](https://www.evm.codes/?fork=shanghai)
+[Type5-zkEVM](https://t5zkevm.tetrationlab.com/) is a website where you can simulate our type5 EVM in the playground, similarly to [evm.codes](https://www.evm.codes/?fork=shanghai)
 
 We will provide the option for users to prove computation on our Type5 zkEVM directly from frontend in the future.
 
@@ -52,7 +52,7 @@ For now, go ahead and see how it works in Circuit below!
 ##### Circuit
 
 - The way to run circuit is similar to Turing Zero above since we also use Noir here.
-- Here, our witness example is to simulate when a user deposits fund.
+- Here, our witness example is simulating a P2P Lending!
 
 #### Additional Info
 
