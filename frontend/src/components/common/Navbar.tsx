@@ -20,7 +20,7 @@ import { Title } from "./Title";
 
 const MENU: Menu[] = [
   {
-    label: "Home",
+    label: "Turing Zero",
     href: "/",
   },
   {
