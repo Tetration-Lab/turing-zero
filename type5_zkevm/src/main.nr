@@ -35,6 +35,7 @@ fn main(state_init: pub [u8;SIZE], state_end: [u8;SIZE], calldata: [u8;SIZE], ca
     let mut counter: u8 = 0;
     let mut state: [u8; SIZE] = state_init;
     let mut bal:u8 = bal_start + call_value;
+    let mut ret_val: u8 = 0;
     let mut stack: [u8;SIZE] = [0; SIZE]; // stack[0] is buffer
     let mut stack_counter: u8 = 3;
 
@@ -57,8 +58,9 @@ fn main(state_init: pub [u8;SIZE], state_end: [u8;SIZE], calldata: [u8;SIZE], ca
         std::println(counter);
         // return return_val
         if op == 0 { 
-            let val = top_stack;
-            assert(val == return_val);
+            let v = top_stack;
+            assert(v == return_val);
+            ret_val = v;
             // don't move stack counter
             next_stack = top_stack;
             next_second_stack = second_stack;
@@ -325,16 +327,16 @@ fn main(state_init: pub [u8;SIZE], state_end: [u8;SIZE], calldata: [u8;SIZE], ca
     std::println("end balance");
     std::println(bal);
     std::println(bal_end);
-    assert(bal == bal_end);
+    assert(bal - ret_val == bal_end);
     // reach return opcode
     assert(code[counter] == 0);
 }
 
 #[test]
 fn test_main() {
-    let mut state_end: [u8;SIZE]= [0; SIZE];
-    state_end[0] = 69;
-    state_end[1] = 12;
+    let mut state_end1: [u8;SIZE]= [0; SIZE];
+    state_end1[0] = 69;
+    state_end1[1] = 12;
     let mut code: [u8;CODE_SIZE]= [0; CODE_SIZE];
     code[0] = 15; // caller
     code[1] = 26; // push
@@ -348,7 +350,7 @@ fn test_main() {
 
     main(
         [0;SIZE], // state_init
-        state_end, // state_end
+        state_end1, // state_end
         [0;SIZE], // calldata
         12, // call_value
         code, // code
@@ -358,11 +360,47 @@ fn test_main() {
         69, // caller
         0, // return_val
     );
-}
 
+    
+}
 #[test]
 fn test_main2(){
-    let mut state_init: [u8;SIZE]= [0; SIZE];
-    state_init[0] = 69;
-    state_init[1] = 12;
+    let mut state_end1: [u8;SIZE]= [0; SIZE];
+    state_end1[0] = 69;
+    state_end1[1] = 12;
+
+    let mut code2: [u8;CODE_SIZE] = [0; CODE_SIZE];
+    let mut code2: [u8;CODE_SIZE] = [0; CODE_SIZE];
+    code2[0] = 15; // caller
+    code2[1] = 26; // push
+    code2[2] = 2; // 2
+    code2[3] = 23; // sstore
+    code2[4] = 18; // blocknumber
+    code2[5] = 26; // push
+    code2[6] = 3; // 3
+    code2[7] = 23; // sstore
+    code2[8] = 26; // push
+    code2[9] = 1; // 1
+    code2[10] = 22; // sload
+    code2[11] = 0; // return
+
+    let mut state_end2: [u8;SIZE]= [0; SIZE];
+    state_end2[0] = 69;
+    state_end2[1] = 12;
+    state_end2[2] = 29;
+    state_end2[3] = 3;
+
+    main(
+        state_end1, // state_init
+        state_end2, // state_end
+        [0;SIZE], // calldata
+        0, // call_value
+        code2, // code
+        3, // block
+        12, // bal_start
+        0, // bal_end
+        29, // caller
+        12, // return_val
+    );
+
 }

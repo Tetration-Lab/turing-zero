@@ -1,4 +1,4 @@
-// simple turning machine with tape size 10, and 5 states. might expand later
+// simple turning machine. tape size, state size, number of symbols, and number of steps fixed but can be configured.
 
 use dep::std;
 global TAPE_SIZE: u8 = 32;
