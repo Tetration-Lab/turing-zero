@@ -152,11 +152,13 @@ export const parseConfig = (config: any): Config => {
             Object.keys(states).includes(value.transition as string)
           )
         ) {
-          throw new Error("Invalid state");
+          throw new Error(
+            "Invalid state transition, must be halt or exsiting state"
+          );
         }
         // check if go is valid
-        if (value?.move && !["left", "right"].includes(value?.move)) {
-          throw new Error("Invalid go, must be left or right");
+        if (!value?.move || !["left", "right"].includes(value?.move)) {
+          throw new Error("Invalid move, must be left or right");
         }
         // check if write is valid
         if (
@@ -176,9 +178,16 @@ export const parseConfig = (config: any): Config => {
           allStates.push([sym, value]);
         }
       });
+      if (allStates.length === 0) {
+        throw new Error("Invalid state length");
+      }
       return [name, Object.fromEntries(allStates)];
     })
   );
+
+  if (Object.keys(constructedStates).length === 0) {
+    throw new Error("No states");
+  }
 
   return {
     input,
