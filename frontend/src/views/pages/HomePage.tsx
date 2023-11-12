@@ -37,11 +37,11 @@ import { ProofData } from "@noir-lang/backend_barretenberg";
 import { useSubmitTx } from "@/hooks/useSubmitTx";
 import { useGraphNodeLink } from "@/hooks/useGraphNodeLink";
 import { useConfig } from "@/useConfig";
-import { parseInputOutputTape } from "@/interfaces/config";
 import { ChainList } from "@/components/common/ChainList";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { ProofModal } from "@/components/Modal/ProofModal";
 import { WitnessModal } from "@/components/Modal/WitnessModal";
+import { parsePuzzleFromContract } from "@/interfaces/puzzle";
 
 export const HomePage = () => {
   const { isConnected, address } = useAccount();
@@ -98,20 +98,9 @@ export const HomePage = () => {
   });
   const puzzle = useMemo(() => {
     if (puzzles?.[0]) {
-      const p = puzzles[0];
-      const inputTape = parseInputOutputTape(p.startTape);
-      const outputTape = parseInputOutputTape(p.endTape);
-      const firstOutputIndex = outputTape.findIndex((e) => e !== " ");
-      const lastOutputIndex = outputTape.findLastIndex((e) => e !== " ") + 1;
-      return {
-        ...p,
-        inputTape,
-        outputTape,
-        firstOutputIndex,
-        lastOutputIndex,
-      };
+      return parsePuzzleFromContract(Number(iid), puzzles[0]);
     }
-  }, [puzzles]);
+  }, [puzzles, iid]);
 
   return (
     <>
@@ -292,10 +281,7 @@ export const HomePage = () => {
                           scrollSnapAlign="center"
                         >
                           {puzzle.inputTape
-                            .slice(
-                              puzzle.firstOutputIndex,
-                              puzzle.lastOutputIndex
-                            )
+                            .slice(puzzle.firstIndex, puzzle.lastIndex)
                             .map((e, i) => (
                               <BitText key={i}>{e}</BitText>
                             ))}
@@ -308,10 +294,7 @@ export const HomePage = () => {
                           scrollSnapAlign="center"
                         >
                           {puzzle.outputTape
-                            .slice(
-                              puzzle.firstOutputIndex,
-                              puzzle.lastOutputIndex
-                            )
+                            .slice(puzzle.firstIndex, puzzle.lastIndex)
                             .map((e, i) => (
                               <BitText key={i}>{e}</BitText>
                             ))}
