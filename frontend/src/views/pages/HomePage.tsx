@@ -127,7 +127,7 @@ export const HomePage = () => {
             gap={1}
           >
             <Stack spacing={1}>
-              <Heading>Turing Zero {TITLE}</Heading>
+              <Heading>{TITLE}</Heading>
               <Text>{DESCRIPTION}</Text>
               <Text as="i">
                 Made with love by{" "}

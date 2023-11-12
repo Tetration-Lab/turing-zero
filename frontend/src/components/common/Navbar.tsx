@@ -27,6 +27,10 @@ const MENU: Menu[] = [
     label: "Puzzles",
     href: "/puzzles",
   },
+  {
+    label: "zkEVM",
+    href: "https://t5zkevm.tetrationlab.com/",
+  },
 ];
 
 declare global {
@@ -93,6 +97,7 @@ const DesktopNav = () => {
           key={i}
           as={LinkNext}
           href={navItem.href}
+          isExternal={navItem.href?.includes("http")}
           fontWeight={router.pathname === navItem.href ? "bold" : "normal"}
         >
           {navItem.label}
