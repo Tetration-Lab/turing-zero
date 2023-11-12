@@ -1,7 +1,7 @@
-# Turing-Zero [@ZKHackIII](https://docs.google.com/presentation/d/12PGC8Kbqlih2db5kSJf3CY4rGAtsnfdu7MQ79Y7VOwI/edit#slide=id.g299f98d3e12_0_18)
+# zkVM-0
 
 ```
-We build zk Turing Machine and type5 zkEVM to educate people how zkVM works
+We build zkVM to educate people how zkVM works
 ```
 
 zkVM is always such a BIG BLACK BOX where only a number of well-established protocols really know how it works, while normies just give up on reading 10k lines of those codes to understand it.
@@ -14,8 +14,6 @@ We ship two products: Turing Zero and Type5-zkEVM
 
 ### 1. Turing Zero:
 
-We write zk-Turing Machine using Noir.
-
 ##### Frontend
 
 [Turing-Zero](turing-zero.vercel.app) is an interactive website for users to define their own program through Turing Machine, and instantly see how it runs on tape and state machine.
@@ -23,6 +21,8 @@ We write zk-Turing Machine using Noir.
 We provide a few puzzles for you to play around writing your own program to solve it, then you can PROVE that you actually come up with a program that solves this puzzle! (Thanks to our zk Turing Machine)
 
 ##### Circuit
+
+We write zk-Turing Machine using Noir.
 
 - Test circuit
   - `nargo test`
@@ -43,7 +43,7 @@ We write simple zk-EVM with only 30 Ocodes, hence "Type5" since not compatible w
 
 ##### Frontend
 
-[Type5-zkEVM](https://t5zkevm.tetrationlab.com/) (thanks to [evm.codes](https://www.evm.codes/)) is a website where you can simulate our type5 EVM.
+[Type5-zkEVM](https://t5zkevm.tetrationlab.com/) is a website where you can simulate our type5 EVM in the playground, similary to [evm.codes](https://www.evm.codes/?fork=shanghai)
 
 We will provide the option for users to prove computation on our Type5 zkEVM directly from frontend in the future.
 
@@ -51,5 +51,17 @@ For now, go ahead and see how it works in Circuit below!
 
 ##### Circuit
 
-- The way to run circuit is similar to Turing Zero above.
+- The way to run circuit is similar to Turing Zero above since we also use Noir here.
 - Here, our witness example is to simulate when a user deposits fund.
+
+#### Additional Info
+
+Our [slide](https://docs.google.com/presentation/d/12PGC8Kbqlih2db5kSJf3CY4rGAtsnfdu7MQ79Y7VOwI/edit#slide=id.g299f98d3e12_0_18) for zkHackIII Istanbul.
+
+#### Thanks
+
+- Turing Zero DSL inspired by https://turingmachine.io/
+- Type 5 ZKEVM inspired by EVM
+- Type 5 ZKEVM site modified from https://evm.codes
+- Circuit in noir, site in Next.js + React
+- Powered by free coffee and food at ZKHackIII Istanbul
