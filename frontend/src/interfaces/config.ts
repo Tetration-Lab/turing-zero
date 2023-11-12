@@ -36,7 +36,15 @@ export const parseInputOutputTape = (input: bigint): ("0" | "1" | " ")[] => {
 
 export const toWitness = (config: Config) => {
   const tapeInit = _.range(0, TAPE_SIZE).map(() => 0);
-  const configInit = config.input.split("").map((c) => parseInt(c) + 1);
+  const configInit = config.input.split("").map((c) => {
+    if (c === "0") {
+      return 1;
+    } else if (c === "1") {
+      return 2;
+    } else {
+      return 0;
+    }
+  });
   tapeInit.splice(TAPE_SIZE / 2, configInit.length, ...configInit);
   const write = _.range(0, TOTAL_STATE_SIZE).map(() => 0);
   const move = _.range(0, TOTAL_STATE_SIZE).map(() => 1);
@@ -125,9 +133,9 @@ export const parseConfig = (config: any): Config => {
 
   const { input, states } = config;
 
-  // check if input consists of only 0s and 1s
-  if (!/^[01]+$/.test(input)) {
-    throw new Error("Input must consist of only 0s and 1s");
+  // check if input consists of only 0s and 1s and empty spaces
+  if (!/^[01 ]+$/.test(input)) {
+    throw new Error("Input must consist of only 0s and 1s empty spaces");
   }
 
   const constructedStates = Object.fromEntries(

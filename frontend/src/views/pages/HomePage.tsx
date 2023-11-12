@@ -165,9 +165,9 @@ export const HomePage = () => {
                 >
                   <Text
                     zIndex={turing.currentInput === i ? 1 : 0}
-                    boxSize={{ base: "48px", sm: "64px" }}
+                    boxSize={{ base: "48px", md: "64px" }}
                     flexShrink={0}
-                    fontSize={{ base: "2xl", sm: "3xl" }}
+                    fontSize={{ base: "2xl", md: "3xl" }}
                     borderWidth={turing.currentInput === i ? "2px" : "1px"}
                     borderColor={turing.currentInput === i ? "red" : "gray"}
                     transition="all 0.2s ease-in-out"
