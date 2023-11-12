@@ -49,6 +49,7 @@ export const HomePage = () => {
 
   const proofModal = useDisclosure();
   const witnessModal = useDisclosure();
+  const isModalOpen = proofModal.isOpen || witnessModal.isOpen;
 
   const { code, setCodeDebounced, config } = useConfig();
   const turing = useTuring(config);
@@ -166,7 +167,7 @@ export const HomePage = () => {
                   key={i}
                   hasArrow
                   variant="red"
-                  isOpen={turing.currentInput === i}
+                  isOpen={turing.currentInput === i && !isModalOpen}
                   label={turing.currentProgram}
                   placement="bottom"
                 >
