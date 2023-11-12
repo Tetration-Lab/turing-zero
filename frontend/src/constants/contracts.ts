@@ -1,8 +1,9 @@
 import { Address, parseAbi } from "viem";
-import { mantleTestnet } from "viem/chains";
+import { mantleTestnet, scrollSepolia } from "viem/chains";
 
 export const CONTRACTS: { [chainId: number]: Address } = {
   [mantleTestnet.id]: "0xbf382f9c2672378a6b0e6337605a9f4ed692e617",
+  [scrollSepolia.id]: "0x797e451d2e6782565db4481cf4a68c818894eeba",
 };
 
 export const getContract = (chainId: number): Address => {

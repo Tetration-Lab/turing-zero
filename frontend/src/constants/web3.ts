@@ -5,7 +5,7 @@ import { createWeb3Modal } from "@web3modal/wagmi";
 import { DESCRIPTION, TITLE } from "./texts";
 import theme from "@/themes";
 import { publicProvider } from "wagmi/providers/public";
-import { goerli, mantleTestnet } from "viem/chains";
+import { mantleTestnet, scrollSepolia } from "viem/chains";
 import { Address, Hex } from "viem";
 
 const metadata = {
@@ -15,14 +15,13 @@ const metadata = {
   icons: [""],
 };
 
-export const chains = [mantleTestnet];
+export const chains = [mantleTestnet, scrollSepolia];
 
 export const getChain = (chainId: number) => {
   return chains.find((chain) => chain.id === chainId);
 };
 
 const { publicClient } = configureChains(chains, [
-  publicProvider(),
   publicProvider(),
   publicProvider(),
 ]);
