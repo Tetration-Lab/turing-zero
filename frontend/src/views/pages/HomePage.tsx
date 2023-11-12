@@ -312,9 +312,10 @@ export const HomePage = () => {
                       {!_.isEqual(turing.initialInput, puzzle.inputTape) && (
                         <Button
                           onClick={() => {
+                            const trimmed = puzzle.inputTape.join("").trim();
                             const newCode = code.replace(
                               /"input":\s*".*"/g,
-                              `"input": "${puzzle.inputTape.join("").trim()}"`
+                              `"input": "${trimmed.length > 0 ? trimmed : " "}"`
                             );
                             setCodeDebounced(newCode);
                           }}
