@@ -54,8 +54,7 @@ fn main(state_init: pub [u8;SIZE], state_end: [u8;SIZE], calldata: [u8;SIZE], ca
         let mut next_state_idx: u8 = 0;
         let mut next_state_val: u8 = access(state, next_state_idx);
 
-        std::println(op);
-        std::println(counter);
+
         // return return_val
         if op == 0 { 
             let v = top_stack;
@@ -270,8 +269,8 @@ fn main(state_init: pub [u8;SIZE], state_end: [u8;SIZE], calldata: [u8;SIZE], ca
         // jumpi idx VAL1 -> if VAL1 { JUMP idx }
         if op == 25 { 
             let idx = top_stack;
-            let val1 = stack[stack_counter - 1];
-            counter = counter * (val1 == 0) as u8 + idx * (val1 != 0) as u8;
+            let val1 = second_stack;
+            counter = (counter + 1) * (val1 == 0) as u8 + idx * (val1 != 0) as u8;
             stack_counter -= 2;
             next_stack = third_stack;
             next_second_stack = forth_stack;
@@ -313,6 +312,11 @@ fn main(state_init: pub [u8;SIZE], state_end: [u8;SIZE], calldata: [u8;SIZE], ca
         mem = modify(mem, next_mem_idx, next_mem_val);
         state = modify(state, next_state_idx, next_state_val);
         assert(stack_counter > 1);
+        std::println(op);
+        std::println(counter);
+        std::println(stack);
+        std::println(stack_counter);
+        std::println("--");
     }
 
     // check end state
@@ -333,7 +337,7 @@ fn main(state_init: pub [u8;SIZE], state_end: [u8;SIZE], calldata: [u8;SIZE], ca
 }
 
 #[test]
-fn test_main() {
+fn test_deposit() {
     let mut state_end1: [u8;SIZE]= [0; SIZE];
     state_end1[0] = 69;
     state_end1[1] = 12;
@@ -364,7 +368,7 @@ fn test_main() {
     
 }
 #[test]
-fn test_main2(){
+fn test_borrow(){
     let mut state_end1: [u8;SIZE]= [0; SIZE];
     state_end1[0] = 69;
     state_end1[1] = 12;
@@ -401,6 +405,47 @@ fn test_main2(){
         0, // bal_end
         29, // caller
         12, // return_val
+    );
+
+}
+
+#[test]
+fn test_return(){
+    let mut state_end2: [u8;SIZE]= [0; SIZE];
+    state_end2[0] = 69;
+    state_end2[1] = 12;
+    state_end2[2] = 29;
+    state_end2[3] = 3;
+
+    let mut code3: [u8;CODE_SIZE] = [0; CODE_SIZE];
+    code3[0] = 16; // callvalue
+    code3[1] = 26; // push
+    code3[2] = 1; // 1
+    code3[3] = 22; // sload
+    code3[4] = 26; // push
+    code3[5] = 3; // 3
+    code3[6] = 22; // sload
+    code3[7] = 18 ; // blocknumber
+    code3[8] = 2; // sub
+    code3[9] = 1; // add
+    code3[10] = 7; // GT
+    code3[11] = 26; // push
+    code3[12] = 15; // 15
+    code3[13] = 25; // jumpi
+    code3[14] = 0; // return
+    code3[15] = 29; // revert
+
+    main(
+        state_end2, // state_init
+        state_end2, // state_end
+        [0;SIZE], // calldata
+        30, // call_value
+        code3, // code
+        7, // block
+        0, // bal_start
+        30, // bal_end
+        29, // caller
+        0, // return_val
     );
 
 }
