@@ -9,6 +9,7 @@ import {
   ModalOverlay,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { ProofData } from "@noir-lang/backend_barretenberg";
 import { useMemo } from "react";
@@ -23,9 +24,19 @@ export const WitnessModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
+  const toast = useToast();
   const witness = useMemo(() => {
     if (!config) return;
-    return toWitness(config);
+    try {
+      return toWitness(config);
+    } catch (e: any) {
+      toast({
+        title: "Error",
+        description: e.message,
+        status: "error",
+      });
+      console.error(e);
+    }
   }, [config]);
   return (
     <Modal size="xl" isOpen={isOpen} onClose={onClose} isCentered>

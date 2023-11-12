@@ -13,7 +13,7 @@ export interface Config {
   states: {
     [state: string]: {
       [key in "0" | "1" | "empty"]: {
-        write?: 0 | 1 | " ";
+        write?: 0 | 1 | "empty";
         transition?: string | "halt";
         move: "left" | "right";
       };
@@ -49,7 +49,7 @@ export const toWitness = (config: Config) => {
     Object.entries(state).forEach(([char, transition]) => {
       const c = char.trim();
       const charIndex = c === "0" ? 1 : c === "1" ? 2 : 0;
-      if (transition.write === " ") {
+      if (transition.write === "empty") {
         write[i * CHAR_SIZE + charIndex] = 0;
       } else if (transition.write !== undefined) {
         write[i * CHAR_SIZE + charIndex] = transition.write + 1;
@@ -151,7 +151,10 @@ export const parseConfig = (config: any): Config => {
           throw new Error("Invalid go, must be left or right");
         }
         // check if write is valid
-        if (value?.write !== undefined && ![0, 1, " "].includes(value?.write)) {
+        if (
+          value?.write !== undefined &&
+          ![0, 1, "empty"].includes(value?.write)
+        ) {
           throw new Error("Invalid write, must be 0 or 1 or empty");
         }
 

@@ -53,7 +53,10 @@ export const useTuring = (initialConfig: Config | null) => {
       ]!;
     if (currentProgramChar?.write !== undefined) {
       const newInput = [...input];
-      newInput[currentInput] = `${currentProgramChar.write}`;
+      newInput[currentInput] =
+        currentProgramChar.write === "empty"
+          ? " "
+          : `${currentProgramChar.write}`;
       setInput(newInput);
     }
     if (currentProgramChar?.transition !== undefined) {

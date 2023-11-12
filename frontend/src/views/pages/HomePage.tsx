@@ -42,6 +42,7 @@ import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { ProofModal } from "@/components/Modal/ProofModal";
 import { WitnessModal } from "@/components/Modal/WitnessModal";
 import { parsePuzzleFromContract } from "@/interfaces/puzzle";
+import { AUTO_LOAD } from "@/constants/config";
 
 export const HomePage = () => {
   const { isConnected, address } = useAccount();
@@ -51,7 +52,9 @@ export const HomePage = () => {
   const witnessModal = useDisclosure();
   const isModalOpen = proofModal.isOpen || witnessModal.isOpen;
 
-  const { code, setCodeDebounced, config } = useConfig();
+  const { code, setCodeDebounced, config, load } = useConfig({
+    autoLoad: AUTO_LOAD,
+  });
   const turing = useTuring(config);
 
   const { links, nodes } = useGraphNodeLink({
@@ -229,6 +232,7 @@ export const HomePage = () => {
               </Text>
             </HStack>
             <Stack justify="center" direction={{ base: "column", sm: "row" }}>
+              {!AUTO_LOAD && <Button onClick={load}>Load From Editor</Button>}
               <Button onClick={turing.next} colorScheme="green">
                 Next Step
               </Button>
@@ -302,11 +306,22 @@ export const HomePage = () => {
                       </Stack>
                       <Divider my={2} opacity={0.1} />
                       <Text fontSize="sm" color="primary.500" as="b">
-                        {!_.isEqual(turing.initialInput, puzzle.inputTape) &&
-                          "Initial input is not the same!"}
                         {!_.isEqual(turing.endInput, puzzle.outputTape) &&
                           "Output is not the same. Please simulate till end!"}
                       </Text>
+                      {!_.isEqual(turing.initialInput, puzzle.inputTape) && (
+                        <Button
+                          onClick={() => {
+                            const newCode = code.replace(
+                              /"input":\s*".*"/g,
+                              `"input": "${puzzle.inputTape.join("").trim()}"`
+                            );
+                            setCodeDebounced(newCode);
+                          }}
+                        >
+                          Copy Input To Editor
+                        </Button>
+                      )}
                       <Button
                         colorScheme="telegram"
                         isDisabled={

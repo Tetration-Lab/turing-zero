@@ -48,7 +48,7 @@ export const useGraphNodeLink = ({
         Object.entries(groupByTarget).forEach(([target, entries]) => {
           const label = entries.map((e) => {
             return `${e.key[0]}->${
-              e.write !== undefined ? `${e.write}` : e.key[0]
+              e.write !== undefined ? `${e.write.toString()[0]}` : e.key[0]
             },${e.move[0].toUpperCase()}`;
           });
 
