@@ -72,6 +72,7 @@ export const PuzzlesPage = () => {
                       <Text fontSize="xl" as="b">
                         {puzzle.name}
                       </Text>
+                      <Spacer />
                       <Text>{formatAddress(puzzle.creator)}</Text>
                       <Stack align="end" spacing={0}>
                         <Text as="b">Start:</Text>

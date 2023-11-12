@@ -20,8 +20,14 @@ export const parsePuzzleFromContract = (id: number, puzzle: any): Puzzle => {
   const firstInputIndex = inputTape.findIndex((e) => e !== " ");
   const lastOutputIndex = outputTape.findLastIndex((e) => e !== " ") + 1;
   const lastInputIndex = inputTape.findLastIndex((e) => e !== " ") + 1;
-  const firstIndex = Math.min(firstInputIndex, firstOutputIndex);
-  const lastIndex = Math.max(lastInputIndex, lastOutputIndex);
+  const firstIndex =
+    firstInputIndex === -1
+      ? firstOutputIndex
+      : Math.min(firstInputIndex, firstOutputIndex);
+  const lastIndex =
+    lastInputIndex === 0
+      ? lastOutputIndex
+      : Math.max(lastInputIndex, lastOutputIndex);
   return {
     ...puzzle,
     inputTape,
